@@ -3,5 +3,5 @@
 
 # Except
 !/.gitignore
-!/build/libs
-!/src
+!/build/libs/
+!/src/
