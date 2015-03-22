@@ -95,6 +95,11 @@ public class Snitch implements Comparable<Snitch>{
 		return new Date((long)((oldDate.getTime() + (d * HOURS_IN_MILLIS))));
 	}
 	
+	/**
+	 * Computes the amount of hours remaining until cullTime
+	 * 
+	 * @return hours until Snitch cullTime
+	 */
 	public double hoursToDate(){
 		Date oldDate = new Date();
 		return (this.cullTime.getTime() - oldDate.getTime()) / HOURS_IN_MILLIS;
