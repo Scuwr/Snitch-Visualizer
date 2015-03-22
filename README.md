@@ -1,9 +1,7 @@
 ## Snitch-Visualizer (FML 1.7.2)
----
 A mod to render snitches in civcraft
 
 ### Compiling from Source
----
 
 This mod is compiled using the Forge Mod Loader (FML) mod pack which includes data from the Minecraft Coder Pack (MCP).
 
