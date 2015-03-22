@@ -13,6 +13,12 @@ import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
 
+/**
+ * File I/O Handler for Snitch Visualizer
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVFileIOHandler {
 
 	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/SnitchList.txt");

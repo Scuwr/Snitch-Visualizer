@@ -7,6 +7,18 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Tick Handler for Snitch Visualizer
+ * 
+ * I was unable to query server-side ticks, so I set the tick value very high to
+ * prevent the player from being kicked due to spamming
+ * 
+ * In other words, the game is laggy and thinks you're spamming if it sends out too many
+ * messages in a given amount of time.
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVTickHandler{
 
 	public int serverTicks = 0;

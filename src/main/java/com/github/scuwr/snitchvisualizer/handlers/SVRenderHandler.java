@@ -12,6 +12,15 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+/**
+ * Render Hander for Snitch Visualizer
+ * 
+ * I honestly have no idea what half of this code does, 
+ * so suggestions to improve would be greatly appreciated.
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVRenderHandler {
 	public static boolean enabled = true;
 	

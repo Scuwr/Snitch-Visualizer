@@ -15,6 +15,12 @@ import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Defines the on-screen gui
+ * 
+ * @author Scuwr
+ *
+ */
 @SideOnly(Side.CLIENT)
 public class SVGui extends GuiScreen{
 	

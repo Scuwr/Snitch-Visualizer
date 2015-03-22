@@ -9,6 +9,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+/**
+ * Chat handler for Snitch Visualizer
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVChatHandler {
 
 	public static boolean updateSnitchList = false;
@@ -22,10 +28,10 @@ public class SVChatHandler {
 				ParseSnitch(msg);
 			}
 			else if(msg.contains("snitch at")){
-				
+				// does nothing yet
 			}
 			else if(msg.contains("Used|Block Break|Block Place")){
-				
+				// does nothing yet
 			}
 			else if(msg.contains("Unknown command") || msg.contains(" is empty")){
 				jalistIndex = 1;

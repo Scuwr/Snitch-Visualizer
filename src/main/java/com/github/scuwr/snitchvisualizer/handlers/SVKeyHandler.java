@@ -11,6 +11,14 @@ import net.minecraft.client.settings.KeyBinding;
 
 import com.github.scuwr.snitchvisualizer.gui.SVGui;
 
+/**
+ * Key handler for Snitch Visualizer
+ * 
+ * Currently is hard-coded to the 'V' key
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVKeyHandler{
 	
 	public static KeyBinding keySVGui = new KeyBinding("SV Settings", Keyboard.KEY_V, "Snitch Visualizer");

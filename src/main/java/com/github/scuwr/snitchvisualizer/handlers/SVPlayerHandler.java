@@ -12,6 +12,12 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 
+/**
+ * Player Handler for Snitch Visualizer
+ * 
+ * @author Scuwr
+ *
+ */
 public class SVPlayerHandler {
 	
 	private static boolean playerIsInSnitchArea = false;
@@ -47,6 +53,19 @@ public class SVPlayerHandler {
 		}
 	}
 
+	/**
+	 * Recursive 3D Binary Search Detection Algorithm
+	 * 
+	 * Works 98% of the time for some reason
+	 * 
+	 * @param x location of player in x axis
+	 * @param y location of player in y axis
+	 * @param z location of player in z axis
+	 * @param min lowest index in Snitchlist array
+	 * @param max highest index in Snitchlist array
+	 * @param snitchList array containing a list of Snitch objects
+	 * @return
+	 */
 	private int checkSnitchAreaRecursion(int x, int y, int z, int min, int max, ArrayList<Snitch> snitchList) {
 		if (max < min)
 			return -1;
