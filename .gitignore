@@ -1,7 +1,7 @@
 # Ignore everything
-*
+/*
 
 # Except
-!.gitignore
-!build/libs/*
-!src/*
+!/.gitignore
+!/build/libs
+!/src
