@@ -5,6 +5,12 @@ import java.util.Date;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 
+/**
+ * Defines the Snitch object for use by the mod
+ * 
+ * @author Scuwr
+ *
+ */
 public class Snitch implements Comparable<Snitch>{
 	public int x;
 	public int y;
@@ -20,6 +26,16 @@ public class Snitch implements Comparable<Snitch>{
 	public String type;
 	public static int HOURS_IN_MILLIS = 3600000;
 
+	/**
+	 * Initializes Snitch object
+	 * 
+	 * @param x location of Snitch object on x axis
+	 * @param y location of Snitch object on y axis
+	 * @param z location of Snitch object on z axis
+	 * @param cullTime length in time before a Snitch object is culled
+	 * @param ctGroup group that owns the Snitch object
+	 * @param type Snitch object is either an "Alert" or "Snitch"
+	 */
 	public Snitch(int x, int y, int z, double cullTime, String ctGroup, String type){
 		this.x = x;
 		this.y = y;
@@ -38,6 +54,9 @@ public class Snitch implements Comparable<Snitch>{
 		}else this.type = type;
 	}
 
+	/**
+	 * Defines how to compare one Snitch object against another
+	 */
 	@Override
 	public int compareTo(Snitch n){
 		if(this.x > n.x) return 1;
@@ -53,11 +72,24 @@ public class Snitch implements Comparable<Snitch>{
 		return 0;
 	}
 	
+	/**
+	 * Gets the distance from the player to the Snitch object
+	 * 
+	 * @return distance from player to Snitch object
+	 */
 	public double getDistance(){
 		EntityClientPlayerMP thePlayer = Minecraft.getMinecraft().thePlayer;
 		return Math.sqrt(Math.pow((thePlayer.posX - this.x), 2) + Math.pow((thePlayer.posZ - this.z), 2));
 	}
 	
+	/**
+	 * Converts hours to milliseconds in the future from the current date
+	 * 
+	 * Used to specify the cullTime of the Snitch object
+	 * 
+	 * @param d time in hours
+	 * @return date in milliseconds
+	 */
 	public static Date changeToDate(Double d){
 		Date oldDate = new Date();
 		return new Date((long)((oldDate.getTime() + (d * HOURS_IN_MILLIS))));

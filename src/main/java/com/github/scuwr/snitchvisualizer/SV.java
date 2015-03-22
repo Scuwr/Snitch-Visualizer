@@ -27,8 +27,13 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 
+/**
+ * Main class file for Snitch Visualizer
+ * 
+ * @author Scuwr
+ *
+ */
 @Mod(modid = SV.MODID, name = SV.MODNAME, version = SV.MODVERSION)
-
 public class SV {
 	
 	public static final String MODID = "scuwrsnitchvisualizer";
