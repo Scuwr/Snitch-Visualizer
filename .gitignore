@@ -1,7 +1,11 @@
 # Ignore everything
-/*
+*
 
-# Except
-!/.gitignore
-!/build/libs/
-!/src/
+#Except
+!.gitignore
+!README.md
+!LICENSE
+!src/
+
+!build/
+!build/libs
