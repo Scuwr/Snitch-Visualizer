@@ -1,9 +1,8 @@
 ## Snitch-Visualizer
-=================
+<sub>*This mod was compiled using FML 1.7.2-10.12.2.1121</sub>
+---
 
 A mod to render snitches in civcraft
-
-<sub>*This mod was compiled using FML 1.7.2-10.12.2.1121</sub>
 
 ### Compiling from Source
 ---
