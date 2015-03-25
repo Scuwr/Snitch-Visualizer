@@ -1,11 +1,13 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
 import java.util.Collections;
+import java.util.Date;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -37,11 +39,44 @@ public class SVChatHandler {
 				jalistIndex = 1;
 				updateSnitchList = false;
 			}
+			else if(msg.contains("TPS from last 1m, 5m, 15m:")){
+				ParseTPS(msg);
+			}
 		}
 	}
 	
 	public static void updateSnitchList(){
+		Minecraft.getMinecraft().thePlayer.sendChatMessage("/tps");
+		SVTickHandler.start = new Date();
 		updateSnitchList = true;
+	}
+	
+	public void ParseTPS(String msg){
+		msg = msg.substring(msg.indexOf(':') + 1);
+		String[] tokens = msg.split(", +"); // " 11.13, 11.25, 11.32"
+		if(tokens.length > 2){
+			double a = Double.parseDouble(tokens[0]);
+			double b = Double.parseDouble(tokens[1]);
+			double c = Double.parseDouble(tokens[2]);
+			
+			if(a < b && a < c){
+				SVTickHandler.waitTime = SVTickHandler.tickTimeout / a;
+			}
+			else if (b < a && b < c){
+				SVTickHandler.waitTime = SVTickHandler.tickTimeout / b;
+			}
+			else{
+				SVTickHandler.waitTime = SVTickHandler.tickTimeout / c;
+			}
+		}
+		else{
+			SVTickHandler.waitTime = 4;
+		}
+		
+		Minecraft.getMinecraft().thePlayer.addChatMessage(
+				new ChatComponentText("Timeout between commands is " + 
+						Double.toString(SVTickHandler.waitTime) + " seconds.")
+		);
 	}
 	
 	public void ParseSnitch(String msg){

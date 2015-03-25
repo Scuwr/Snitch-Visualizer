@@ -1,5 +1,7 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
+import java.util.Date;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -21,16 +23,25 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class SVTickHandler{
 
-	public int serverTicks = 0;
+	public int playerTicks = 0;
+	public static double waitTime = 4;
+	public static int tickTimeout = 20;
+	public static Date start = new Date();
 	
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event){
 		new SVPlayerHandler().onPlayerEvent(event);
-		if(serverTicks <= 40) serverTicks++;
-		if(SVChatHandler.updateSnitchList && serverTicks > 40){
+		/*if(playerTicks <= 40) playerTicks++;
+		if(SVChatHandler.updateSnitchList && playerTicks > 40){
 			Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
-			serverTicks = 0;
+			playerTicks = 0;
 			SVChatHandler.jalistIndex++;
+		}*/
+		if(((new Date()).getTime() - (waitTime*1000)) > start.getTime() && SVChatHandler.updateSnitchList){
+			Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
+			SVChatHandler.jalistIndex++;
+			start = new Date();
 		}
+		
 	}
 }
