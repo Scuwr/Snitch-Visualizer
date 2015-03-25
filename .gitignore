@@ -9,5 +9,6 @@
 
 !build/
 !build/libs
+!build/libs/*.jar
 
-!javadoc/
+!javadoc/*
