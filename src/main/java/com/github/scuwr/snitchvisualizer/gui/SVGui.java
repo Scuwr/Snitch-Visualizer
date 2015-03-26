@@ -2,13 +2,17 @@ package com.github.scuwr.snitchvisualizer.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiOptionSlider;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
 import com.github.scuwr.snitchvisualizer.SV;
+import com.github.scuwr.snitchvisualizer.SVSettings;
 import com.github.scuwr.snitchvisualizer.handlers.SVChatHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
 
@@ -25,8 +29,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class SVGui extends GuiScreen{
 	
 	public GuiScreen parentScreen;
-	public String snitchRendering = SV.instance.config.rendering ? "Snitch Rendering: ON" : "Snitch Rendering: OFF";
-	public String updateDetecting = SV.instance.config.updateDetection ? "Update Detection: ON  (EXPERIMENTAL!)" : "Update Detection: OFF";
+	
+	private static final SVSettings.Options renderDistance = SVSettings.Options.RENDER_DISTANCE;
 	
 	public SVGui(GuiScreen guiscreen){
 		this.parentScreen = guiscreen;
@@ -49,34 +53,27 @@ public class SVGui extends GuiScreen{
 		byte b0 = -16;
 		
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, "Force Snitchlist Update"));
-		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, snitchRendering));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, updateDetecting));
-		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 96 + b0, "Done"));
+		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
+		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
+		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
+		this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
+		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("menu.returnToGame")));
 	}
 	
 	public void actionPerformed(GuiButton button){
 		switch(button.id){
 			case 0:
 				SVChatHandler.updateSnitchList();
+				this.mc.displayGuiScreen((GuiScreen)null);
+                this.mc.setIngameFocus();
 				break;
 			case 1: 
-				if(SV.instance.config.rendering){
-					SV.instance.config.rendering = false;
-					((GuiButton)this.buttonList.get(1)).displayString = "Snitch Rendering: OFF";
-				}else{
-					SV.instance.config.rendering = true;
-					((GuiButton)this.buttonList.get(1)).displayString = "Snitch Rendering: ON";
-				}
+				SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED);
+				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED);
 				break;
 			case 2: 
-				if(SV.instance.config.updateDetection){
-					SV.instance.config.updateDetection = false;
-					((GuiButton)this.buttonList.get(2)).displayString = "Update Detection: OFF";
-				}else{
-					SV.instance.config.updateDetection = true;
-					((GuiButton)this.buttonList.get(2)).displayString = "Update Detection: ON (EXPERIMENTAL!)";
-				}
+				SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION);
+				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION);
 				break;
 			case 3:
                 this.mc.displayGuiScreen((GuiScreen)null);

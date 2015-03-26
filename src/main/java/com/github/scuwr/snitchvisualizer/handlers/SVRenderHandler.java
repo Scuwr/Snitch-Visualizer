@@ -22,14 +22,13 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
  *
  */
 public class SVRenderHandler {
-	public static boolean enabled = true;
 	
 	@SubscribeEvent
 	public void eventRenderWorld(RenderWorldLastEvent event){
-		if(SVFileIOHandler.isDone && SV.instance.config.rendering){
+		if(SVFileIOHandler.isDone && SV.settings.renderEnabled){
 			try{
 				for(Snitch n : SV.instance.snitchList){
-					if(n.getDistance() < 96){
+					if(n.getDistance() < SV.settings.renderDistance * 16){
 						GL11.glBlendFunc(770, 771);
 				        GL11.glLineWidth(5.0F);
 				        GL11.glDisable(2896);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import com.github.scuwr.snitchvisualizer.classobjects.SVConfig;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
@@ -45,6 +46,7 @@ public class SV {
 	
 	public ArrayList<Snitch> snitchList;
 	public static SVConfig config;
+	public static SVSettings settings;
 	public static Logger logger = LogManager.getLogger("SnitchVisualizer");
 	
 	@Mod.EventHandler
@@ -52,7 +54,8 @@ public class SV {
 		logger.info("Loading: preInit");
 		instance = this;
 		this.snitchList = new ArrayList();
-		this.config = new SVConfig(true, true);
+		this.config = new SVConfig(true, true, 96, Keyboard.KEY_V);
+		this.settings = new SVSettings(this);
 		SVFileIOHandler.loadList();
 	}
 	

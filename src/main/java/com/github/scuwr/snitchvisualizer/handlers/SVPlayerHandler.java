@@ -36,7 +36,7 @@ public class SVPlayerHandler {
 	}
 	
 	public void onPlayerMove(EntityClientPlayerMP player){
-		if(SV.instance.config.updateDetection) checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList);
+		if(SV.settings.updateDetection) checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList);
 	}
 	
 	public void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList){
