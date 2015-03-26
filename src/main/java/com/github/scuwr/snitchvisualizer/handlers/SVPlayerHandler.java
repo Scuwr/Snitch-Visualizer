@@ -8,6 +8,7 @@ import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -36,19 +37,24 @@ public class SVPlayerHandler {
 	}
 	
 	public void onPlayerMove(EntityClientPlayerMP player){
-		if(SV.settings.updateDetection) checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList);
+		if(SV.settings.updateDetection) checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList, false);
 	}
 	
-	public void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList){
+	public static void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch){
 		int index = checkSnitchAreaRecursion(x, y, z, 0, snitchList.size()-1, snitchList);
 		if(index != -1){
 			Snitch n = SV.instance.snitchList.get(index);
 			if(n.type == "Alert") n.cullTime = Snitch.changeToDate(672.0);
 			else n.cullTime = Snitch.changeToDate(336.0);
 			playerIsInSnitchArea = true;
+			if(removeSnitch){
+				SV.instance.snitchList.remove(index);
+				SV.instance.logger.info("Snitch Removed!");
+				Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("[" + SV.MODNAME + "] You have just deleted a Snitch!"));
+			}
 		}
 		else if (playerIsInSnitchArea){
-			playerIsInSnitchArea = false;
+			playerIsInSnitchArea = false;			
 			SVFileIOHandler.saveList();
 		}
 	}
@@ -66,7 +72,7 @@ public class SVPlayerHandler {
 	 * @param snitchList array containing a list of Snitch objects
 	 * @return
 	 */
-	private int checkSnitchAreaRecursion(int x, int y, int z, int min, int max, ArrayList<Snitch> snitchList) {
+	private static int checkSnitchAreaRecursion(int x, int y, int z, int min, int max, ArrayList<Snitch> snitchList) {
 		if (max < min)
 			return -1;
 		else{
