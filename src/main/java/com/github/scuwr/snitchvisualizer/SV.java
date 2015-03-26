@@ -54,8 +54,8 @@ public class SV {
 		logger.info("Loading: preInit");
 		instance = this;
 		this.snitchList = new ArrayList();
-		this.config = new SVConfig(true, true, 96, Keyboard.KEY_V);
 		this.settings = new SVSettings(this);
+		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
 	}
 	

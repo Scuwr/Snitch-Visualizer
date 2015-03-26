@@ -14,7 +14,6 @@ import net.minecraft.util.StringTranslate;
 public class SVSettings{
 
 	protected SV sv;
-    private File optionsFile;
     
     public boolean listUpdate;
     public boolean updateDetection;
@@ -29,7 +28,6 @@ public class SVSettings{
         renderDistance = 6.0f;
         svSettingsKey = (float)Keyboard.KEY_V;
         this.sv = sv;
-        //SVFileIOHandler.loadList();
     }
 
     public static String getKeyDisplayString(int i){
@@ -48,7 +46,7 @@ public class SVSettings{
         if (option == Options.RENDER_DISTANCE){
             this.renderDistance = f;
         }
-        if (option == Options.SETTINGS_KEYBINDING){
+        else if (option == Options.SETTINGS_KEYBINDING){
         	this.svSettingsKey = f;
         }
     }
@@ -62,6 +60,18 @@ public class SVSettings{
     	}
     	else if (option == Options.RENDER_ENABLED){
     		this.renderEnabled = !this.renderEnabled;
+    	}
+    }
+    
+    public void setOptionValue(Options option, boolean b){
+    	if (option == Options.LIST_UPDATE){
+    		this.listUpdate = b;
+    	}
+    	else if (option == Options.UPDATE_DETECTION){
+    		this.updateDetection = b;
+    	}
+    	else if (option == Options.RENDER_ENABLED){
+    		this.renderEnabled = b;
     	}
     }
     

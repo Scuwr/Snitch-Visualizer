@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.settings.KeyBinding;
 
+import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.gui.SVGui;
 
 /**
@@ -21,7 +22,7 @@ import com.github.scuwr.snitchvisualizer.gui.SVGui;
  */
 public class SVKeyHandler{
 	
-	public static KeyBinding keySVGui = new KeyBinding("SV Settings", Keyboard.KEY_V, "Snitch Visualizer");
+	public KeyBinding keySVGui = new KeyBinding("SV Settings", (int)SV.settings.svSettingsKey, "Snitch Visualizer");
 	
 	public SVKeyHandler(){
 		ClientRegistry.registerKeyBinding(keySVGui);

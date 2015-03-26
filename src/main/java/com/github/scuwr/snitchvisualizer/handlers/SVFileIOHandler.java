@@ -13,6 +13,8 @@ import com.github.scuwr.snitchvisualizer.SVSettings;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.StatCollector;
 
 /**
  * File I/O Handler for Snitch Visualizer
@@ -70,12 +72,13 @@ public class SVFileIOHandler {
 				SV.instance.logger.info("Creating new file: SVSettings.txt");
 				svSettings.createNewFile();
 			}
+			//KeyBinding[] keys = Minecraft.getMinecraft().gameSettings.keyBindings;
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(svSettings));
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION) + ";\r\n");
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.RENDER_DISTANCE) + ";\r\n");
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED) + ";\r\n");
-			bw.write(SV.settings.getKeyBinding(SVSettings.Options.SETTINGS_KEYBINDING) + ";\r\n");
+			//bw.write(SV.settings.getKeyBinding(SVSettings.Options.SETTINGS_KEYBINDING) + ";Depricated\r\n");
 
 			bw.close();
 		} catch (IOException e){
@@ -111,6 +114,48 @@ public class SVFileIOHandler {
 				oldSnitchList.delete();
 				saveList();
 			}
+		} catch (IOException e){
+			SV.instance.logger.error("Failed to load SnitchList.csv!");
+		} catch (NullPointerException e){
+			SV.instance.logger.error("SnitchList.csv does not exist!");
+		}
+		isDone = true;
+	}
+	
+	public static void loadSettings(){
+		isDone = false;
+		try{			
+			if(!svSettings.exists()) saveSettings();
+			SV.instance.logger.info("Loading Settings..");
+			
+			BufferedReader br = new BufferedReader(new FileReader(svSettings));
+			String line = br.readLine();
+			while(line != null){
+				String tokens[] = line.split(": |;");
+				if(tokens.length > 1){
+					
+					if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.UPDATE_DETECTION.getEnumString()))){
+						if(tokens[1].contains(StatCollector.translateToLocal("options.on"))) SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION, true);
+						else SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION, false);
+					}
+					else if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.RENDER_ENABLED.getEnumString()))){
+						if(tokens[1].contains(StatCollector.translateToLocal("options.on"))) SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED, true);
+						else SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED, false);
+					}
+					//else if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.SETTINGS_KEYBINDING.getEnumString()))){
+						//SV.settings.setOptionFloatValue(SVSettings.Options.SETTINGS_KEYBINDING, (float)Integer.parseInt(tokens[1]));
+					//}
+					else if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.RENDER_DISTANCE.getEnumString()))){
+						String token[] = tokens[1].split(" ");
+						
+						if(token[0].contains("MAX")) SV.settings.setOptionFloatValue(SVSettings.Options.RENDER_DISTANCE, SVSettings.Options.RENDER_DISTANCE.getValueMax());
+						else if(token[0].contains("MIN")) SV.settings.setOptionFloatValue(SVSettings.Options.RENDER_DISTANCE, SVSettings.Options.RENDER_DISTANCE.getValueMin());
+						else SV.settings.setOptionFloatValue(SVSettings.Options.RENDER_DISTANCE, (float)Integer.parseInt(token[0]));
+					}
+				}
+				line = br.readLine();
+			}
+			br.close();
 		} catch (IOException e){
 			SV.instance.logger.error("Failed to load SnitchList.csv!");
 		} catch (NullPointerException e){

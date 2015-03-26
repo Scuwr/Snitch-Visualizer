@@ -54,8 +54,8 @@ public class SVGui extends GuiScreen{
 		
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
-		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
+		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
+		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
 		this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
 		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("menu.returnToGame")));
 	}
@@ -68,13 +68,13 @@ public class SVGui extends GuiScreen{
                 this.mc.setIngameFocus();
 				break;
 			case 1: 
-				SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED);
-				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED);
+				SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION);
+				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION);
 				SVFileIOHandler.saveSettings();
 				break;
 			case 2: 
-				SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION);
-				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION);
+				SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED);
+				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED);
 				SVFileIOHandler.saveSettings();
 				break;
 			case 3:
