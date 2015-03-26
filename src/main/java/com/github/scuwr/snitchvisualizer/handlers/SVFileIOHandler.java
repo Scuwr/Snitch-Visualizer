@@ -45,10 +45,6 @@ public class SVFileIOHandler {
 			}
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
-			//bw.write("Config:\r\n");
-			//bw.write("\tRendering: " + SV.instance.config.rendering + "\r\n");
-			//bw.write("\tUpdateDetection: " + SV.instance.config.updateDetection + "\r\n");
-			//bw.write("SnitchList:\r\n");
 			for(Snitch n : SV.instance.snitchList){
 				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.type + "," + "\r\n");
 			}
@@ -72,13 +68,11 @@ public class SVFileIOHandler {
 				SV.instance.logger.info("Creating new file: SVSettings.txt");
 				svSettings.createNewFile();
 			}
-			//KeyBinding[] keys = Minecraft.getMinecraft().gameSettings.keyBindings;
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(svSettings));
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION) + ";\r\n");
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.RENDER_DISTANCE) + ";\r\n");
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED) + ";\r\n");
-			//bw.write(SV.settings.getKeyBinding(SVSettings.Options.SETTINGS_KEYBINDING) + ";Depricated\r\n");
 
 			bw.close();
 		} catch (IOException e){
@@ -142,9 +136,6 @@ public class SVFileIOHandler {
 						if(tokens[1].contains(StatCollector.translateToLocal("options.on"))) SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED, true);
 						else SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED, false);
 					}
-					//else if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.SETTINGS_KEYBINDING.getEnumString()))){
-						//SV.settings.setOptionFloatValue(SVSettings.Options.SETTINGS_KEYBINDING, (float)Integer.parseInt(tokens[1]));
-					//}
 					else if(tokens[0].contains(StatCollector.translateToLocal(SVSettings.Options.RENDER_DISTANCE.getEnumString()))){
 						String token[] = tokens[1].split(" ");
 						

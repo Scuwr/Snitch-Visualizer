@@ -2,10 +2,13 @@ package com.github.scuwr.snitchvisualizer.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiKeyBindingList;
 import net.minecraft.client.gui.GuiOptionSlider;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
@@ -32,6 +35,9 @@ public class SVGui extends GuiScreen{
 	
 	private static final SVSettings.Options renderDistance = SVSettings.Options.RENDER_DISTANCE;
 	
+	private GuiSnitchList keyBindingList;
+	public KeyBinding buttonId = null;
+	
 	public SVGui(GuiScreen guiscreen){
 		this.parentScreen = guiscreen;
 	}
@@ -40,6 +46,7 @@ public class SVGui extends GuiScreen{
 	public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
+        this.keyBindingList.drawScreen(par1, par2, par2);
         this.drawCenteredString(this.fontRendererObj, "Game menu", this.width / 2, 40, 16777215);
         super.drawScreen(par1, par2, par3);
     }
@@ -52,12 +59,14 @@ public class SVGui extends GuiScreen{
 	public void initGui(){
 		byte b0 = -16;
 		
+		this.keyBindingList = new GuiSnitchList(this, this.mc);
+		
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
 		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
 		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
 		this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
-		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("menu.returnToGame")));
+		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("gui.done")));
 	}
 	
 	public void actionPerformed(GuiButton button){
