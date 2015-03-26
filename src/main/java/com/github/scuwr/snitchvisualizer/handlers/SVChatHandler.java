@@ -33,7 +33,10 @@ public class SVChatHandler {
 				// does nothing yet
 			}
 			else if(msg.contains("Used|Block Break|Block Place")){
-				// does nothing yet
+				// render block place/break/use
+			}
+			else if(msg.contains("Snitch Log for")){
+				// export jainfo to csv
 			}
 			else if(msg.contains("Unknown command") || msg.contains(" is empty")){
 				jalistIndex = 1;

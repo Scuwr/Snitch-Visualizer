@@ -70,15 +70,17 @@ public class SVGui extends GuiScreen{
 			case 1: 
 				SV.settings.setOptionValue(SVSettings.Options.RENDER_ENABLED);
 				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED);
+				SVFileIOHandler.saveSettings();
 				break;
 			case 2: 
 				SV.settings.setOptionValue(SVSettings.Options.UPDATE_DETECTION);
 				button.displayString = SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION);
+				SVFileIOHandler.saveSettings();
 				break;
 			case 3:
                 this.mc.displayGuiScreen((GuiScreen)null);
                 this.mc.setIngameFocus();
-                SVFileIOHandler.saveList();
+                SVFileIOHandler.saveSettings();
                 break;
 		}
 	}

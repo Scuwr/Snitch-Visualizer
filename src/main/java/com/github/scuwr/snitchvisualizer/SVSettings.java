@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.lwjgl.input.Keyboard;
 
+import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
@@ -18,13 +20,16 @@ public class SVSettings{
     public boolean updateDetection;
     public boolean renderEnabled;
     public float renderDistance;
+    public float svSettingsKey;
 
     public SVSettings(SV sv){
         listUpdate = false;
         updateDetection = true;
         renderEnabled = true;
         renderDistance = 6.0f;
+        svSettingsKey = (float)Keyboard.KEY_V;
         this.sv = sv;
+        //SVFileIOHandler.loadList();
     }
 
     public static String getKeyDisplayString(int i){
@@ -42,6 +47,9 @@ public class SVSettings{
     public void setOptionFloatValue(Options option, float f){
         if (option == Options.RENDER_DISTANCE){
             this.renderDistance = f;
+        }
+        if (option == Options.SETTINGS_KEYBINDING){
+        	this.svSettingsKey = f;
         }
     }
     
@@ -73,6 +81,9 @@ public class SVSettings{
     public float getOptionFloatValue(Options option){
         if (option == Options.RENDER_DISTANCE){
             return renderDistance;
+        }
+        else if (option == Options.SETTINGS_KEYBINDING){
+        	return svSettingsKey;
         }
         else{
             return 0.0F;
@@ -114,6 +125,9 @@ public class SVSettings{
             		return (new StringBuilder()).append(s).append(StatCollector.translateToLocal("options.off")).toString();
             	}
             }
+            else if (option == Options.SETTINGS_KEYBINDING){
+            	return (new StringBuilder()).append(s).append((int)(f)).toString();
+            }
 
             if (f == 0.0F){
                 return (new StringBuilder()).append(s).append(StatCollector.translateToLocal("options.off")).toString();
@@ -144,7 +158,8 @@ public class SVSettings{
 		LIST_UPDATE("svoptions.listUpdate", true, false),
 		UPDATE_DETECTION("svoptions.updateDetection", true, false),
 		RENDER_DISTANCE("svoptions.renderDistance", true, false, 1.0F, 6.0F, 1.0F),
-		RENDER_ENABLED("svoptions.renderEnabled", true, false);
+		RENDER_ENABLED("svoptions.renderEnabled", true, false),
+		SETTINGS_KEYBINDING("svoptions.keyBinding", true, false);
 	
 	    private final boolean enumFloat;
 	    private final boolean enumBoolean;
