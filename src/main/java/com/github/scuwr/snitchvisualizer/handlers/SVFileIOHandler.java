@@ -46,7 +46,7 @@ public class SVFileIOHandler {
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
 			for(Snitch n : SV.instance.snitchList){
-				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.type + "," + "\r\n");
+				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.name + "," + "\r\n");
 			}
 			bw.close();
 		} catch (IOException e){

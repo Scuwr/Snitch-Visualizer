@@ -23,7 +23,7 @@ public class Snitch implements Comparable<Snitch>{
 	public int fieldMaxZ;
 	public Date cullTime;
 	public String ctGroup;
-	public String type;
+	public String name;
 	public static int HOURS_IN_MILLIS = 3600000;
 
 	/**
@@ -34,9 +34,9 @@ public class Snitch implements Comparable<Snitch>{
 	 * @param z location of Snitch object on z axis
 	 * @param cullTime length in time before a Snitch object is culled
 	 * @param ctGroup group that owns the Snitch object
-	 * @param type Snitch object is either an "Alert" or "Snitch"
+	 * @param name Snitch object now have names!
 	 */
-	public Snitch(int x, int y, int z, double cullTime, String ctGroup, String type){
+	public Snitch(int x, int y, int z, double cullTime, String ctGroup, String name){
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -48,10 +48,8 @@ public class Snitch implements Comparable<Snitch>{
 		this.fieldMaxZ = z + 11;
 		this.cullTime = changeToDate(cullTime);
 		this.ctGroup = ctGroup;
-		if(type == null){
-			if(cullTime > 336) this.type = "Alert";
-			else this.type = "Snitch";
-		}else this.type = type;
+		if(name.equals("Alert") || name.equals("Snitch")) this.name = "Unkown";
+		else this.name = name;
 	}
 
 	/**
@@ -59,7 +57,8 @@ public class Snitch implements Comparable<Snitch>{
 	 */
 	@Override
 	public int compareTo(Snitch n){
-		if(this.x > n.x) return 1;
+		if(this.x > n.x) 
+			return 1;
 		else if(n.x > this.x) return -1;
 		else{
 			if(this.z > n.z) return 1;

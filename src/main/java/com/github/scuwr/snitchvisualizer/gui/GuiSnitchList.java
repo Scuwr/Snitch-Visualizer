@@ -59,7 +59,7 @@ public class GuiSnitchList extends GuiListExtended
                 this.iGuiList[i++] = new GuiSnitchList.CategoryEntry(s1);
             }*/
 
-            int l = mc.fontRenderer.getStringWidth("-9999  -9999  -9999  " + snitch.ctGroup + "  " + snitch.type);
+            int l = mc.fontRenderer.getStringWidth("-9999  -9999  -9999  " + snitch.ctGroup + "  " + snitch.name);
             if (l > this.entryWidth) this.entryWidth = l;
             
             l = mc.fontRenderer.getStringWidth("-9999  ");
@@ -131,24 +131,22 @@ public class GuiSnitchList extends GuiListExtended
     public class ListEntry implements GuiListExtended.IGuiListEntry
     {
         private final Snitch snitch;
-        private final String keyName;
         private final String xCoord;
         private final String yCoord;
         private final String zCoord;
         private final String ctGroup;
-        private final String snitchType;
+        private final String snitchName;
         private final GuiButton btnRemove;
         private static final String __OBFID = "CL_00000735";
 
         private ListEntry(Snitch p_i45029_2_)
         {
             this.snitch = p_i45029_2_;
-            this.keyName = snitch.x + " " + snitch.y + " " + snitch.z + " " + snitch.ctGroup + " " + snitch.type;
             this.xCoord = Integer.toString(snitch.x);
             this.yCoord = Integer.toString(snitch.y);
             this.zCoord = Integer.toString(snitch.z);
             this.ctGroup = snitch.ctGroup;
-            this.snitchType = snitch.type;
+            this.snitchName = snitch.name;
             this.btnRemove = new GuiButton(0, 0, 0, 50, 18, I18n.format("Remove", new Object[0]));
         }
 
@@ -158,7 +156,7 @@ public class GuiSnitchList extends GuiListExtended
         	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchType, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchName, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	
             this.btnRemove.xPosition = xPosition + 190;
             this.btnRemove.yPosition = yPosition;

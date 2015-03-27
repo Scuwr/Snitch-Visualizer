@@ -45,8 +45,7 @@ public class SVPlayerHandler {
 		int index = checkSnitchAreaRecursion(x, y, z, 0, snitchList.size()-1, snitchList);
 		if(index != -1){
 			Snitch n = SV.instance.snitchList.get(index);
-			if(n.type == "Alert") n.cullTime = Snitch.changeToDate(672.0);
-			else n.cullTime = Snitch.changeToDate(336.0);
+			n.cullTime = Snitch.changeToDate(672.0);
 			playerIsInSnitchArea = true;
 			if(removeSnitch){
 				SV.instance.snitchList.remove(index);
