@@ -47,7 +47,7 @@ public class SVGui extends GuiScreen{
     {
         this.drawDefaultBackground();
         this.keyBindingList.drawScreen(par1, par2, par2);
-        this.drawCenteredString(this.fontRendererObj, "Game menu", this.width / 2, 40, 16777215);
+        //this.drawCenteredString(this.fontRendererObj, "Game menu", this.width / 2, 40, 16777215);
         super.drawScreen(par1, par2, par3);
     }
 	
@@ -62,11 +62,11 @@ public class SVGui extends GuiScreen{
 		this.keyBindingList = new GuiSnitchList(this, this.mc);
 		
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
-		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
-		this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
-		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("gui.done")));
+		//this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
+		//this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
+		//this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
+		//this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
+		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + 48 + b0, StatCollector.translateToLocal("gui.done")));
 	}
 	
 	public void actionPerformed(GuiButton button){

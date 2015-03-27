@@ -16,61 +16,76 @@ import net.minecraft.util.EnumChatFormatting;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.github.scuwr.snitchvisualizer.SV;
+import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
+
 @SideOnly(Side.CLIENT)
 public class GuiSnitchList extends GuiListExtended
 {
     private final SVGui svGui;
     private final Minecraft mc;
-    private final GuiListExtended.IGuiListEntry[] field_148190_m;
-    private int field_148188_n = 0;
+    private final GuiListExtended.IGuiListEntry[] iGuiList;
+    private int entryWidth = 0;
+    private int coordWidth = 0;
+    private int ctGroupWidth = 0;
+    //private int snitchTypeWidth = 0;
     private static final String __OBFID = "CL_00000732";
 
     public GuiSnitchList(SVGui svGui, Minecraft mc)
     {
-        super(mc, svGui.width, svGui.height, 63, svGui.height - 32, 20);
+        super(mc, svGui.width, svGui.height, 32, svGui.height - 32, 20);
         this.svGui = svGui;
         this.mc = mc;
-        KeyBinding[] akeybinding = (KeyBinding[])ArrayUtils.clone(mc.gameSettings.keyBindings);
-        this.field_148190_m = new GuiListExtended.IGuiListEntry[akeybinding.length + KeyBinding.getKeybinds().size()];
-        Arrays.sort(akeybinding);
+        
+        
+        
+        //KeyBinding[] akeybinding = (KeyBinding[])ArrayUtils.clone(mc.gameSettings.keyBindings);
+        int listSize = SV.instance.snitchList.size();
+        this.iGuiList = new GuiListExtended.IGuiListEntry[listSize];        
         int i = 0;
         String s = null;
-        KeyBinding[] akeybinding1 = akeybinding;
-        int j = akeybinding.length;
+        //KeyBinding[] akeybinding1 = akeybinding;
+        
 
-        for (int k = 0; k < j; ++k)
+        for (int k = 0; k < listSize; ++k)
         {
-            KeyBinding keybinding = akeybinding1[k];
-            String s1 = keybinding.getKeyCategory();
+        	Snitch snitch = SV.instance.snitchList.get(k);
+            //KeyBinding keybinding = akeybinding1[k];
+            //String s1 = keybinding.getKeyCategory();
 
-            if (!s1.equals(s))
+            /*if (!s1.equals(s))
             {
                 s = s1;
-                this.field_148190_m[i++] = new GuiSnitchList.CategoryEntry(s1);
-            }
+                this.iGuiList[i++] = new GuiSnitchList.CategoryEntry(s1);
+            }*/
 
-            int l = mc.fontRenderer.getStringWidth(I18n.format(keybinding.getKeyDescription(), new Object[0]));
-
-            if (l > this.field_148188_n)
-            {
-                this.field_148188_n = l;
-            }
-
-            this.field_148190_m[i++] = new GuiSnitchList.KeyEntry(keybinding, null);
+            int l = mc.fontRenderer.getStringWidth("-9999  -9999  -9999  " + snitch.ctGroup + "  " + snitch.type);
+            if (l > this.entryWidth) this.entryWidth = l;
+            
+            l = mc.fontRenderer.getStringWidth("-9999  ");
+            if (l > this.coordWidth) this.coordWidth = l;
+            
+            l = mc.fontRenderer.getStringWidth(snitch.ctGroup + "  ");
+            if (l > this.ctGroupWidth) this.ctGroupWidth = l;
+            
+            //l = mc.fontRenderer.getStringWidth(snitch.type + "  ");
+            //if (l > this.snitchTypeWidth) this.snitchTypeWidth = l;
+            
+            this.iGuiList[i++] = new GuiSnitchList.ListEntry(snitch);
         }
     }
 
     protected int getSize()
     {
-        return this.field_148190_m.length;
+        return this.iGuiList.length;
     }
 
     /**
      * Gets the IGuiListEntry object for the given index
      */
-    public GuiListExtended.IGuiListEntry getListEntry(int p_148180_1_)
+    public GuiListExtended.IGuiListEntry getListEntry(int index)
     {
-        return this.field_148190_m[p_148180_1_];
+        return this.iGuiList[index];
     }
 
     protected int getScrollBarX()
@@ -89,126 +104,90 @@ public class GuiSnitchList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class CategoryEntry implements GuiListExtended.IGuiListEntry
     {
-        private final String field_148285_b;
-        private final int field_148286_c;
+        private final String categoryName;
+        private final int categoryWidth;
         private static final String __OBFID = "CL_00000734";
 
-        public CategoryEntry(String p_i45028_2_)
+        public CategoryEntry(String categoryName)
         {
-            this.field_148285_b = I18n.format(p_i45028_2_, new Object[0]);
-            this.field_148286_c = GuiSnitchList.this.mc.fontRenderer.getStringWidth(this.field_148285_b);
+            this.categoryName = I18n.format(categoryName, new Object[0]);
+            this.categoryWidth = GuiSnitchList.this.mc.fontRenderer.getStringWidth(this.categoryName);
         }
 
         public void drawEntry(int p_148279_1_, int p_148279_2_, int p_148279_3_, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
         {
-            GuiSnitchList.this.mc.fontRenderer.drawString(this.field_148285_b, GuiSnitchList.this.mc.currentScreen.width / 2 - this.field_148286_c / 2, p_148279_3_ + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+            GuiSnitchList.this.mc.fontRenderer.drawString(this.categoryName, GuiSnitchList.this.mc.currentScreen.width / 2 - this.categoryWidth / 2, p_148279_3_ + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        }
+        
+        public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
+        {
+            return false;
+        }
+        
+        public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_) {}
+    }
+
+    @SideOnly(Side.CLIENT)
+    public class ListEntry implements GuiListExtended.IGuiListEntry
+    {
+        private final Snitch snitch;
+        private final String keyName;
+        private final String xCoord;
+        private final String yCoord;
+        private final String zCoord;
+        private final String ctGroup;
+        private final String snitchType;
+        private final GuiButton btnRemove;
+        private static final String __OBFID = "CL_00000735";
+
+        private ListEntry(Snitch p_i45029_2_)
+        {
+            this.snitch = p_i45029_2_;
+            this.keyName = snitch.x + " " + snitch.y + " " + snitch.z + " " + snitch.ctGroup + " " + snitch.type;
+            this.xCoord = Integer.toString(snitch.x);
+            this.yCoord = Integer.toString(snitch.y);
+            this.zCoord = Integer.toString(snitch.z);
+            this.ctGroup = snitch.ctGroup;
+            this.snitchType = snitch.type;
+            this.btnRemove = new GuiButton(0, 0, 0, 50, 18, I18n.format("Remove", new Object[0]));
+        }
+
+        public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
+        {
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition + 185 - GuiSnitchList.this.entryWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchType, xPosition + 185 - GuiSnitchList.this.entryWidth + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	
+            this.btnRemove.xPosition = xPosition + 190;
+            this.btnRemove.yPosition = yPosition;
+            this.btnRemove.enabled = true;
+            this.btnRemove.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
         }
 
         /**
          * Returns true if the mouse has been pressed on this control.
          */
-        public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
+        public boolean mousePressed(int index, int xPos, int yPos, int mouseEvent, int relX, int relY)
         {
+            if (this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos))
+            {
+                return true;
+            }
+            
             return false;
         }
 
         /**
          * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
          */
-        public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_) {}
-    }
-
-    @SideOnly(Side.CLIENT)
-    public class KeyEntry implements GuiListExtended.IGuiListEntry
-    {
-        private final KeyBinding field_148282_b;
-        private final String field_148283_c;
-        private final GuiButton btnChangeKeyBinding;
-        private final GuiButton btnReset;
-        private static final String __OBFID = "CL_00000735";
-
-        private KeyEntry(KeyBinding p_i45029_2_)
+        public void mouseReleased(int index, int xPos, int yPos, int mouseEvent, int relX, int relY)
         {
-            this.field_148282_b = p_i45029_2_;
-            this.field_148283_c = I18n.format(p_i45029_2_.getKeyDescription(), new Object[0]);
-            this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 75, 18, I18n.format(p_i45029_2_.getKeyDescription(), new Object[0]));
-            this.btnReset = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
+            this.btnRemove.mouseReleased(xPos, yPos);
         }
 
-        public void drawEntry(int p_148279_1_, int p_148279_2_, int p_148279_3_, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
-        {
-            boolean flag1 = GuiSnitchList.this.svGui.buttonId == this.field_148282_b;
-            GuiSnitchList.this.mc.fontRenderer.drawString(this.field_148283_c, p_148279_2_ + 90 - GuiSnitchList.this.field_148188_n, p_148279_3_ + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnReset.xPosition = p_148279_2_ + 190;
-            this.btnReset.yPosition = p_148279_3_;
-            this.btnReset.enabled = this.field_148282_b.getKeyCode() != this.field_148282_b.getKeyCodeDefault();
-            this.btnReset.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
-            this.btnChangeKeyBinding.xPosition = p_148279_2_ + 105;
-            this.btnChangeKeyBinding.yPosition = p_148279_3_;
-            this.btnChangeKeyBinding.displayString = GameSettings.getKeyDisplayString(this.field_148282_b.getKeyCode());
-            boolean flag2 = false;
-
-            if (this.field_148282_b.getKeyCode() != 0)
-            {
-                KeyBinding[] akeybinding = GuiSnitchList.this.mc.gameSettings.keyBindings;
-                int l1 = akeybinding.length;
-
-                for (int i2 = 0; i2 < l1; ++i2)
-                {
-                    KeyBinding keybinding = akeybinding[i2];
-
-                    if (keybinding != this.field_148282_b && keybinding.getKeyCode() == this.field_148282_b.getKeyCode())
-                    {
-                        flag2 = true;
-                        break;
-                    }
-                }
-            }
-
-            if (flag1)
-            {
-                this.btnChangeKeyBinding.displayString = EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + this.btnChangeKeyBinding.displayString + EnumChatFormatting.WHITE + " <";
-            }
-            else if (flag2)
-            {
-                this.btnChangeKeyBinding.displayString = EnumChatFormatting.RED + this.btnChangeKeyBinding.displayString;
-            }
-
-            this.btnChangeKeyBinding.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
-        }
-
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
-        {
-            if (this.btnChangeKeyBinding.mousePressed(GuiSnitchList.this.mc, p_148278_2_, p_148278_3_))
-            {
-                GuiSnitchList.this.svGui.buttonId = this.field_148282_b;
-                return true;
-            }
-            else if (this.btnReset.mousePressed(GuiSnitchList.this.mc, p_148278_2_, p_148278_3_))
-            {
-                GuiSnitchList.this.mc.gameSettings.setOptionKeyBinding(this.field_148282_b, this.field_148282_b.getKeyCodeDefault());
-                KeyBinding.resetKeyBindingArrayAndHash();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /**
-         * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-         */
-        public void mouseReleased(int p_148277_1_, int p_148277_2_, int p_148277_3_, int p_148277_4_, int p_148277_5_, int p_148277_6_)
-        {
-            this.btnChangeKeyBinding.mouseReleased(p_148277_2_, p_148277_3_);
-            this.btnReset.mouseReleased(p_148277_2_, p_148277_3_);
-        }
-
-        KeyEntry(KeyBinding p_i45030_2_, Object p_i45030_3_)
+        ListEntry(Snitch p_i45030_2_, Object notUsed)
         {
             this(p_i45030_2_);
         }

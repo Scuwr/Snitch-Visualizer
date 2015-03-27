@@ -8,6 +8,7 @@ import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
