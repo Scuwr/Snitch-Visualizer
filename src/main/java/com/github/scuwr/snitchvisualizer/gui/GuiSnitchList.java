@@ -18,11 +18,12 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
+import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
 
 @SideOnly(Side.CLIENT)
 public class GuiSnitchList extends GuiListExtended
 {
-    private final SVGui svGui;
+    private final GuiEditSnitches guiSnitches;
     private final Minecraft mc;
     private final GuiListExtended.IGuiListEntry[] iGuiList;
     private int entryWidth = 0;
@@ -31,40 +32,26 @@ public class GuiSnitchList extends GuiListExtended
     private int nameWidth = 0;
     private static final String __OBFID = "CL_00000732";
 
-    public GuiSnitchList(SVGui svGui, Minecraft mc)
+    public GuiSnitchList(GuiEditSnitches guiSnitches, Minecraft mc)
     {
-        super(mc, svGui.width, svGui.height, 32, svGui.height - 32, 20);
-        this.svGui = svGui;
+        super(mc, guiSnitches.width, guiSnitches.height, 32, guiSnitches.height - 32, 20);
+        this.guiSnitches = guiSnitches;
         this.mc = mc;
-        
-        
-        
-        //KeyBinding[] akeybinding = (KeyBinding[])ArrayUtils.clone(mc.gameSettings.keyBindings);
         int listSize = SV.instance.snitchList.size();
         this.iGuiList = new GuiListExtended.IGuiListEntry[listSize + 1];        
         int i = 0;
         String s = null;
-        //KeyBinding[] akeybinding1 = akeybinding;
         
         this.iGuiList[i++] = new GuiSnitchList.CategoryEntry();
         
         for (int k = 0; k < listSize; ++k)
         {
         	Snitch snitch = SV.instance.snitchList.get(k);
-            //KeyBinding keybinding = akeybinding1[k];
-            //String s1 = keybinding.getKeyCategory();
-
-            /*if (!s1.equals(s))
-            {
-                s = s1;
-                this.iGuiList[i++] = new GuiSnitchList.CategoryEntry(s1);
-            }*/
 
             int l = mc.fontRenderer.getStringWidth("-9999  -9999  -9999  " + snitch.ctGroup + "  " + snitch.name + "  ");
             if (l > this.entryWidth) this.entryWidth = l;
             
-            l = mc.fontRenderer.getStringWidth("-9999  ");
-            if (l > this.coordWidth) this.coordWidth = l;
+            this.coordWidth = mc.fontRenderer.getStringWidth("-9999  ");
             
             l = mc.fontRenderer.getStringWidth(snitch.ctGroup + "  ");
             if (l > this.ctGroupWidth) this.ctGroupWidth = l;
@@ -91,7 +78,7 @@ public class GuiSnitchList extends GuiListExtended
 
     protected int getScrollBarX()
     {
-    	return this.width - 32;
+    	return this.width - 28;
         //return super.getScrollBarX() + 15;
     }
 
@@ -100,7 +87,7 @@ public class GuiSnitchList extends GuiListExtended
      */
     public int getListWidth()
     {
-        return this.width / 2;
+        return this.width - 48;
     	//return super.getListWidth() + 32;
     }
 
@@ -118,11 +105,13 @@ public class GuiSnitchList extends GuiListExtended
         {
             //GuiSnitchList.this.mc.fontRenderer.drawString(this.categoryName, GuiSnitchList.this.mc.currentScreen.width / 2 - this.categoryWidth / 2, p_148279_3_ + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
         
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xHeader, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xHeader)) / 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yHeader, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yHeader)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zHeader, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zHeader)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.groupHeader, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.groupHeader)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.nameHeader, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.nameHeader)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48 ;
+        	
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xHeader)) / 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yHeader)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zHeader)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.groupHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.groupHeader)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.nameHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.nameHeader)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
         }
         
         public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
@@ -158,15 +147,16 @@ public class GuiSnitchList extends GuiListExtended
 
         public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
         {
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xCoord)) / 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yCoord)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zCoord)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.ctGroup)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchName, xPosition + 185 - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.snitchName)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48 ;
         	
-            this.btnRemove.xPosition = xPosition + 190;
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xCoord)) / 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yCoord)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zCoord)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.ctGroup)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchName, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.snitchName)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	
+            this.btnRemove.xPosition = xPosition + 10;
             this.btnRemove.yPosition = yPosition;
-            this.btnRemove.enabled = true;
             this.btnRemove.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
         }
 
@@ -174,10 +164,13 @@ public class GuiSnitchList extends GuiListExtended
          * Returns true if the mouse has been pressed on this control.
          */
         public boolean mousePressed(int index, int xPos, int yPos, int mouseEvent, int relX, int relY)
-        {
-            if (this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos))
-            {
-                return true;
+        {   	
+            if (this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos)){
+                if(SV.instance.snitchList.remove(this.snitch)){
+                	this.btnRemove.displayString = "Removed!";
+                	this.btnRemove.enabled = false;
+                }
+            	return true;
             }
             
             return false;
