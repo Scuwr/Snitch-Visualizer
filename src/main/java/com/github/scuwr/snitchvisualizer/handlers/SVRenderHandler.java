@@ -1,6 +1,7 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
@@ -29,14 +30,14 @@ public class SVRenderHandler {
 			try{
 				for(Snitch n : SV.instance.snitchList){
 					if(n.getDistance() < SV.settings.renderDistance * 16){
-						GL11.glBlendFunc(770, 771);
+						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				        GL11.glLineWidth(5.0F);
-				        GL11.glDisable(2896);
-				        GL11.glDisable(3553);
-				        GL11.glEnable(3042);
-				        GL11.glEnable(2848);
-				        GL11.glEnable(32925);
-				        GL11.glAlphaFunc(516, 0.09F);
+				        GL11.glDisable(GL11.GL_LIGHTING);
+				        GL11.glDisable(GL11.GL_TEXTURE_2D);
+				        GL11.glEnable(GL11.GL_BLEND);
+				        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+				        GL11.glEnable(GL13.GL_MULTISAMPLE);
+				        GL11.glAlphaFunc(GL11.GL_GREATER, 0.09F);
 				        GL11.glDepthMask(false);
 				          
 				        GL11.glPushMatrix();
@@ -63,22 +64,22 @@ public class SVRenderHandler {
 				        GL11.glPopMatrix();
 				        
 				        GL11.glDepthMask(true);
-				        GL11.glDisable(2848);
-				        GL11.glDisable(3042);
-				        GL11.glEnable(3553);
-				        GL11.glEnable(2929);
-				        GL11.glDisable(32925);
-				        GL11.glEnable(2896);  
-	
-				        GL11.glBlendFunc(770, 771);
-				        GL11.glLineWidth(5.0F);
-				        GL11.glDisable(2896);
-				        GL11.glDisable(2929);
-				        GL11.glDisable(3553);
-				        GL11.glEnable(3042);
-				        GL11.glEnable(2848);
-				        GL11.glEnable(32925);
-				        GL11.glAlphaFunc(516, 0.09F);
+				        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+				        GL11.glDisable(GL11.GL_BLEND);
+				        GL11.glEnable(GL11.GL_TEXTURE_2D);
+				        GL11.glEnable(GL11.GL_DEPTH_TEST);
+				        GL11.glDisable(GL13.GL_MULTISAMPLE);
+				        GL11.glEnable(GL11.GL_LIGHTING);
+				        
+				        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				        GL11.glLineWidth(5F);
+				        GL11.glDisable(GL11.GL_LIGHTING);
+				        GL11.glDisable(GL11.GL_DEPTH_TEST);
+				        GL11.glDisable(GL11.GL_TEXTURE_2D);
+				        GL11.glEnable(GL11.GL_BLEND);
+				        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+				        GL11.glEnable(GL13.GL_MULTISAMPLE);
+				        GL11.glAlphaFunc(GL11.GL_GREATER, 0.09F);
 				        GL11.glDepthMask(false);
 				          
 				        GL11.glPushMatrix();
@@ -103,13 +104,13 @@ public class SVRenderHandler {
 			        	drawBoundingBoxQuads(bb);
 			        	GL11.glPopMatrix();
 	
-				        GL11.glDepthMask(true);
-				        GL11.glDisable(2848);
-				        GL11.glDisable(3042);
-				        GL11.glEnable(3553);
-				        GL11.glEnable(2929);
-				        GL11.glDisable(32925);
-				        GL11.glEnable(2896);	        	
+			        	GL11.glDepthMask(true);
+				        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+				        GL11.glDisable(GL11.GL_BLEND);
+				        GL11.glEnable(GL11.GL_TEXTURE_2D);
+				        GL11.glEnable(GL11.GL_DEPTH_TEST);
+				        GL11.glDisable(GL13.GL_MULTISAMPLE);
+				        GL11.glEnable(GL11.GL_LIGHTING);	        	
 					}
 				}
 			}catch(NullPointerException e){System.out.println("An exception has been thrown!");}
