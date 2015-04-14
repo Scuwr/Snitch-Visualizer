@@ -85,6 +85,7 @@ public class SVChatHandler {
 	public void ParseSnitch(String msg){
 		if(msg.contains("[")){
 			msg = msg.substring(msg.indexOf("[") + 1);
+			SV.instance.logger.info("Parsing string " + msg);
 			String[] tokens = msg.split("[ \\[\\]]+");
 			if (tokens.length == 5){
 				try{
@@ -109,6 +110,8 @@ public class SVChatHandler {
 					}
 				}catch(NumberFormatException e){
 					SV.instance.logger.error("Failed to parse snitch from chat!");
+				}catch(NullPointerException e){
+					SV.instance.logger.error("Failed to create snitch instance!");
 				}
 			}
 		}

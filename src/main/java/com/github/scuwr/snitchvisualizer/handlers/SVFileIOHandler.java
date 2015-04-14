@@ -45,6 +45,7 @@ public class SVFileIOHandler {
 			}
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
+			SV.instance.logger.info("Saving Snitch list.. " + SV.instance.snitchList.size() + " snitches to save.");
 			for(Snitch n : SV.instance.snitchList){
 				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.name + "," + "\r\n");
 			}

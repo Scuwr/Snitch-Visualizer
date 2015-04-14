@@ -55,6 +55,10 @@ public class SV {
 		this.settings = new SVSettings(this);
 		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
+		
+		if(this.snitchList instanceof ArrayList){
+			logger.info("Snitch List failed to instantiate!");
+		}
 	}
 	
 	@Mod.EventHandler

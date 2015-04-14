@@ -48,7 +48,7 @@ public class Snitch implements Comparable<Snitch>{
 		this.fieldMaxZ = z + 11;
 		this.cullTime = changeToDate(cullTime);
 		this.ctGroup = ctGroup;
-		if(name.equals("Alert") || name.equals("Snitch")) this.name = "Unkown";
+		if(name == null || name.equals("Alert") || name.equals("Snitch")) this.name = "Unkown";
 		else this.name = name;
 	}
 
