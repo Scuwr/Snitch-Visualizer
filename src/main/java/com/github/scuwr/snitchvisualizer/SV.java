@@ -38,7 +38,7 @@ public class SV {
 	
 	public static final String MODID = "scuwrsnitchvisualizer";
 	public static final String MODNAME = "Snitch Visualizer";
-	public static final String MODVERSION = "1.0.1";
+	public static final String MODVERSION = "1.1.1";
 	
 	@Instance("SV")
 	public static SV instance;
