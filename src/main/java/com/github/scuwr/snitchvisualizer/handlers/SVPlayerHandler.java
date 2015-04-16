@@ -77,33 +77,37 @@ public class SVPlayerHandler {
 			return -1;
 		else{
 			int mid = min + ((max - min) / 2);
+			if (max - min == 1) max = -1;
 			Snitch n = snitchList.get(mid);
 			if(x > n.fieldMaxX)
-				return checkSnitchAreaRecursion(x, y, z, mid + 1, max, snitchList);
+				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
 			if (x < n.fieldMinX)
-				return checkSnitchAreaRecursion(x, y, z, min, mid - 1, snitchList);
-			
-			if(mid + 1 < snitchList.size() && n.x != snitchList.get(mid+1).x){
-				int i = checkSnitchAreaRecursion(x, y, z, mid + 1, max, snitchList);
-				if(i != -1)
-					return i;
-			}
-			if(mid > 0 && n.x != snitchList.get(mid-1).x){
-				int i = checkSnitchAreaRecursion(x, y, z, min, mid - 1, snitchList);
-				if(i != -1)
-					return i;
-			}
-			
+				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
 			if(z > n.fieldMaxZ)
-				return checkSnitchAreaRecursion(x, y, z, mid + 1, max, snitchList);
+				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
 			if (z < n.fieldMinZ)
-				return checkSnitchAreaRecursion(x, y, z, min, mid - 1, snitchList);
+				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
 			if(y > n.fieldMaxY)
-				return checkSnitchAreaRecursion(x, y, z, mid + 1, max, snitchList);
+				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
 			if (y < n.fieldMinY)
-				return checkSnitchAreaRecursion(x, y, z, min, mid - 1, snitchList);
+				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
 			
 			return mid;
 		}
 	}
+	
+	/* New strategy:
+	 * 
+	 * Find lower x limit, then find upper x limit, then find lower z limit, then find upper z limit, then find lower y limit, then find upper y limit
+	 */
+	
+	private static int findLowerXLimit(int x, int min, int max, ArrayList<Snitch> snitchList){
+		if (max < min)	return -1;
+		else {
+			int mid = min + ((max - min) / 2);
+			
+			return mid;
+		}
+	}
+	
 }
