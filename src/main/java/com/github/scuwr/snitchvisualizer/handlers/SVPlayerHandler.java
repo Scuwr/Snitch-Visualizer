@@ -42,7 +42,30 @@ public class SVPlayerHandler {
 	}
 	
 	public static void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch){
-		int index = checkSnitchAreaRecursion(x, y, z, 0, snitchList.size()-1, snitchList);
+		int min = findLowerXLimit(x, 0, snitchList.size() -1, snitchList);
+		int max = findUpperXLimit(x, min, snitchList.size() -1, snitchList);
+  		min = findLowerZLimit(z, min, max, snitchList);
+		max = findUpperZLimit(z, min, max, snitchList);
+		min = findLowerYLimit(y, min, max, snitchList);
+		max = findUpperYLimit(y, min, max, snitchList);
+		
+		int index = -1;
+		double sqDistance = Double.MAX_VALUE;
+		
+		for (int i = min; i < max; i++){
+			Snitch n = snitchList.get(i);
+			if(x > n.fieldMinX && x < n.fieldMaxX && z > n.fieldMinZ && z < n.fieldMaxZ && y > n.fieldMinY && y < n.fieldMaxY){
+				// Get closest snitch
+				double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.x, n.y, n.z);
+				if(temp < sqDistance){
+					sqDistance = temp;
+					index = i;
+				}
+			}
+		}
+		
+		SV.logger.info("Snitch Index: " + index);
+		
 		if(index != -1){
 			Snitch n = SV.instance.snitchList.get(index);
 			n.cullTime = Snitch.changeToDate(672.0);
@@ -58,56 +81,76 @@ public class SVPlayerHandler {
 			SVFileIOHandler.saveList();
 		}
 	}
-
-	/**
-	 * Recursive 3D Binary Search Detection Algorithm
-	 * 
-	 * Works 98% of the time for some reason
-	 * 
-	 * @param x location of player in x axis
-	 * @param y location of player in y axis
-	 * @param z location of player in z axis
-	 * @param min lowest index in Snitchlist array
-	 * @param max highest index in Snitchlist array
-	 * @param snitchList array containing a list of Snitch objects
-	 * @return
-	 */
-	private static int checkSnitchAreaRecursion(int x, int y, int z, int min, int max, ArrayList<Snitch> snitchList) {
-		if (max < min)
-			return -1;
-		else{
-			int mid = min + ((max - min) / 2);
-			if (max - min == 1) max = -1;
-			Snitch n = snitchList.get(mid);
-			if(x > n.fieldMaxX)
-				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
-			if (x < n.fieldMinX)
-				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
-			if(z > n.fieldMaxZ)
-				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
-			if (z < n.fieldMinZ)
-				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
-			if(y > n.fieldMaxY)
-				return checkSnitchAreaRecursion(x, y, z, mid, max, snitchList);
-			if (y < n.fieldMinY)
-				return checkSnitchAreaRecursion(x, y, z, min, mid, snitchList);
-			
-			return mid;
-		}
-	}
 	
 	/* New strategy:
 	 * 
 	 * Find lower x limit, then find upper x limit, then find lower z limit, then find upper z limit, then find lower y limit, then find upper y limit
 	 */
 	
-	private static int findLowerXLimit(int x, int min, int max, ArrayList<Snitch> snitchList){
-		if (max < min)	return -1;
-		else {
-			int mid = min + ((max - min) / 2);
-			
-			return mid;
-		}
+	private static int findUpperXLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return max;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMinX) return findUpperXLimit(i, mid, max, snitchList);
+		if (i < n.fieldMinX) return findUpperXLimit(i, min, mid, snitchList);
+		
+		return mid;
 	}
 	
+	private static int findLowerXLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return min;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMaxX) return findLowerXLimit(i, mid, max, snitchList);
+		if (i < n.fieldMaxX) return findLowerXLimit(i, min, mid, snitchList);
+		
+		return mid;
+	}
+	
+	private static int findUpperYLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return max;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMinY) return findUpperYLimit(i, mid, max, snitchList);
+		if (i < n.fieldMinY) return findUpperYLimit(i, min, mid, snitchList);
+		
+		return mid;
+	}
+
+	
+	private static int findLowerYLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return min;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMaxY) return findLowerYLimit(i, mid, max, snitchList);
+		if (i < n.fieldMaxY) return findLowerYLimit(i, min, mid, snitchList);
+		
+		return mid;
+	}
+	
+	private static int findUpperZLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return max;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMinZ) return findUpperZLimit(i, mid, max, snitchList);
+		if (i < n.fieldMinZ) return findUpperZLimit(i, min, mid, snitchList);
+		
+		return mid;
+	}
+
+	private static int findLowerZLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) return min;
+		Snitch n = snitchList.get(mid);
+		
+		if (i > n.fieldMaxZ) return findLowerZLimit(i, mid, max, snitchList);
+		if (i < n.fieldMaxZ) return findLowerZLimit(i, min, mid, snitchList);
+		
+		return mid;
+	}
 }
