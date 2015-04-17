@@ -57,8 +57,7 @@ public class Snitch implements Comparable<Snitch>{
 	 */
 	@Override
 	public int compareTo(Snitch n){
-		if(this.x > n.x) 
-			return 1;
+		if(this.x > n.x) return 1;
 		else if(n.x > this.x) return -1;
 		else{
 			if(this.z > n.z) return 1;

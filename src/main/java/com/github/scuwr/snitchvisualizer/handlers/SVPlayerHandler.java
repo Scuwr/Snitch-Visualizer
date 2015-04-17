@@ -44,10 +44,10 @@ public class SVPlayerHandler {
 	public static void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch){
 		int min = findLowerXLimit(x, 0, snitchList.size() -1, snitchList);
 		int max = findUpperXLimit(x, min, snitchList.size() -1, snitchList);
-  		min = findLowerZLimit(z, min, max, snitchList);
-		max = findUpperZLimit(z, min, max, snitchList);
-		min = findLowerYLimit(y, min, max, snitchList);
-		max = findUpperYLimit(y, min, max, snitchList);
+  		//min = findLowerZLimit(z, min, max, snitchList);
+		//max = findUpperZLimit(z, min, max, snitchList);
+		//min = findLowerYLimit(y, min, max, snitchList);
+		//max = findUpperYLimit(y, min, max, snitchList);
 		
 		int index = -1;
 		double sqDistance = Double.MAX_VALUE;
@@ -63,8 +63,6 @@ public class SVPlayerHandler {
 				}
 			}
 		}
-		
-		SV.logger.info("Snitch Index: " + index);
 		
 		if(index != -1){
 			Snitch n = SV.instance.snitchList.get(index);
@@ -105,51 +103,6 @@ public class SVPlayerHandler {
 		
 		if (i > n.fieldMaxX) return findLowerXLimit(i, mid, max, snitchList);
 		if (i < n.fieldMaxX) return findLowerXLimit(i, min, mid, snitchList);
-		
-		return mid;
-	}
-	
-	private static int findUpperYLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) return max;
-		Snitch n = snitchList.get(mid);
-		
-		if (i > n.fieldMinY) return findUpperYLimit(i, mid, max, snitchList);
-		if (i < n.fieldMinY) return findUpperYLimit(i, min, mid, snitchList);
-		
-		return mid;
-	}
-
-	
-	private static int findLowerYLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) return min;
-		Snitch n = snitchList.get(mid);
-		
-		if (i > n.fieldMaxY) return findLowerYLimit(i, mid, max, snitchList);
-		if (i < n.fieldMaxY) return findLowerYLimit(i, min, mid, snitchList);
-		
-		return mid;
-	}
-	
-	private static int findUpperZLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) return max;
-		Snitch n = snitchList.get(mid);
-		
-		if (i > n.fieldMinZ) return findUpperZLimit(i, mid, max, snitchList);
-		if (i < n.fieldMinZ) return findUpperZLimit(i, min, mid, snitchList);
-		
-		return mid;
-	}
-
-	private static int findLowerZLimit(int i, int min, int max, ArrayList<Snitch> snitchList){
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) return min;
-		Snitch n = snitchList.get(mid);
-		
-		if (i > n.fieldMaxZ) return findLowerZLimit(i, mid, max, snitchList);
-		if (i < n.fieldMaxZ) return findLowerZLimit(i, min, mid, snitchList);
 		
 		return mid;
 	}
