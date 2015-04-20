@@ -51,7 +51,7 @@ public class SVFileIOHandler {
 			}
 			bw.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to write to SnitchList.csv!");
+			SV.instance.logger.error("Failed to write to SnitchList.csv!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -77,7 +77,7 @@ public class SVFileIOHandler {
 
 			bw.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to write to SVSettings.txt!");
+			SV.instance.logger.error("Failed to write to SVSettings.txt!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -110,9 +110,11 @@ public class SVFileIOHandler {
 				saveList();
 			}
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to load SnitchList.csv!");
+			SV.instance.logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
 		} catch (NullPointerException e){
-			SV.instance.logger.error("SnitchList.csv does not exist!");
+			SV.instance.logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
+		} catch (NumberFormatException e){
+			SV.instance.logger.error("Could not parse integer from list!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -149,9 +151,9 @@ public class SVFileIOHandler {
 			}
 			br.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to load SnitchList.csv!");
+			SV.instance.logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
 		} catch (NullPointerException e){
-			SV.instance.logger.error("SnitchList.csv does not exist!");
+			SV.instance.logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
