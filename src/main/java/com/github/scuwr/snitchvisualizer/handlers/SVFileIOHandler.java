@@ -25,9 +25,9 @@ import net.minecraft.util.StatCollector;
 public class SVFileIOHandler {
 
 	public static File oldSnitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/SnitchList.txt");
-	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer-" + SV.MODVERSION + "/SnitchList.csv");
-	public static File svSettings = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer-" + SV.MODVERSION + "/SVSettings.txt");
-	public static File svDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer-" + SV.MODVERSION);
+	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer" + "/SnitchList.csv");
+	public static File svSettings = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer" + "/SVSettings.txt");
+	public static File svDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer");
 	public static boolean isDone = false;
 	
 	public static void saveList(){

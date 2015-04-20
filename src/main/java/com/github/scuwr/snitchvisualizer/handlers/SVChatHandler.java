@@ -35,8 +35,11 @@ public class SVChatHandler {
 			else if(msg.contains("Used|Block Break|Block Place")){
 				// render block place/break/use
 			}
-			else if(msg.contains("Snitch Log for")){
+			else if(msg.contains("Snitch Log for") || msg.contains("Page 1 is empty for snitch")){
 				// export jainfo to csv
+				Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
+				n.name = parseSnitchName(msg);
+				SVFileIOHandler.saveList();
 			}
 			else if(msg.contains("Unknown command") || msg.contains(" is empty")){
 				jalistIndex = 1;
@@ -115,5 +118,10 @@ public class SVChatHandler {
 				}
 			}
 		}
+	}
+	
+	public String parseSnitchName(String msg){
+		String tokens[] = msg.split(" +|-+");
+		return tokens[tokens.length - 1];
 	}
 }

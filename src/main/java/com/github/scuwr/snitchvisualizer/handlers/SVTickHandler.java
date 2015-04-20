@@ -37,10 +37,15 @@ public class SVTickHandler{
 			playerTicks = 0;
 			SVChatHandler.jalistIndex++;
 		}*/
-		if(((new Date()).getTime() - (waitTime*1000)) > start.getTime() && SVChatHandler.updateSnitchList){
-			Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
-			SVChatHandler.jalistIndex++;
-			start = new Date();
+		if(((new Date()).getTime() - (waitTime*1000)) > start.getTime()){
+			if(SVChatHandler.updateSnitchList){
+				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
+				SVChatHandler.jalistIndex++;
+				start = new Date();
+			}
+			if(SVPlayerHandler.updateSnitchName){
+				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo ");
+			}
 		}
 		
 	}

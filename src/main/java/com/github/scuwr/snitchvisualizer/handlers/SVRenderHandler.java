@@ -111,8 +111,6 @@ public class SVRenderHandler {
 				        GL11.glEnable(GL11.GL_DEPTH_TEST);
 				        GL11.glDisable(GL13.GL_MULTISAMPLE);
 				        GL11.glEnable(GL11.GL_LIGHTING);
-				        
-				        GL11.glDisable(GL11.GL_LIGHTING);
 					}
 				}
 			}catch(NullPointerException e){System.out.println("An exception has been thrown!");}
