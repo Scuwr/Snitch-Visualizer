@@ -1,27 +1,27 @@
 package com.github.scuwr.snitchvisualizer.classobjects;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+
 public class Block {
 	public int x;
 	public int y;
 	public int z;
-	public Type b;
+	public int type;
 	
-	public Block(int x, int y, int z, Type b){
+	public final static int USED = 1;
+	public final static int REMOVED = 2;
+	public final static int PLACED = 3;
+	
+	public Block(int x, int y, int z, int t){
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.b = b;
+		this.type = t;
 	}
 	
-	public enum Type{
-		USED(1),
-		REMOVED(2),
-		PLACED(3);
-	
-		private final int type;
-	    
-	    private Type(int type){
-	        this.type = type;
-	    }
+	public double getDistance(){
+		EntityClientPlayerMP thePlayer = Minecraft.getMinecraft().thePlayer;
+		return Math.sqrt(Math.pow((thePlayer.posX - this.x), 2) + Math.pow((thePlayer.posZ - this.z), 2));
 	}
 }
