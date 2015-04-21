@@ -141,13 +141,14 @@ public class GuiSnitchList extends GuiListExtended
             this.yCoord = Integer.toString(snitch.y);
             this.zCoord = Integer.toString(snitch.z);
             this.ctGroup = snitch.ctGroup;
-            this.snitchName = snitch.name;
+            if(snitch.name.length() > 17) this.snitchName = snitch.name.substring(0, 16) + "~";
+            else this.snitchName = snitch.name;
             this.btnRemove = new GuiButton(0, 0, 0, 50, 18, I18n.format("Remove", new Object[0]));
         }
 
         public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
         {
-        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48 ;
+        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48;
         	
         	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xCoord)) / 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yCoord)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
