@@ -45,6 +45,7 @@ public class SVTickHandler{
 			}
 			if(SVPlayerHandler.updateSnitchName){
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo ");
+				start = new Date();
 			}
 		}
 		

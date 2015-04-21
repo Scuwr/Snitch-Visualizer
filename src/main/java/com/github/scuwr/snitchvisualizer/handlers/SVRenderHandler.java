@@ -17,9 +17,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 /**
  * Render Hander for Snitch Visualizer
  * 
- * I honestly have no idea what half of this code does, 
- * so suggestions to improve would be greatly appreciated.
- * 
  * @author Scuwr
  *
  */
@@ -114,49 +111,50 @@ public class SVRenderHandler {
 				        GL11.glEnable(GL11.GL_LIGHTING);
 					}
 				}
-				
-				for(Block b : SV.instance.blockList){
-					if(b.getDistance() < SV.settings.renderDistance * 16){
-				        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-				        GL11.glLineWidth(5F);
-				        GL11.glDisable(GL11.GL_LIGHTING);
-				        GL11.glDisable(GL11.GL_DEPTH_TEST);
-				        GL11.glDisable(GL11.GL_TEXTURE_2D);
-				        GL11.glEnable(GL11.GL_BLEND);
-				        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-				        GL11.glEnable(GL13.GL_MULTISAMPLE);
-				        GL11.glAlphaFunc(GL11.GL_GREATER, 0.09F);
-				        GL11.glDepthMask(false);
-				          
-				        GL11.glPushMatrix();
-				        double px = -(RenderManager.renderPosX - b.x);
-				        double py = -(RenderManager.renderPosY - b.y);
-				        double pz = -(RenderManager.renderPosZ - b.z);
-				        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(px - 0.01, py - 0.01, pz - 0.01, px + 0.99, py + 0.99, pz + 0.99);
-				        
-				        int blockType = b.type;
-				        switch(blockType){
-				        	case Block.USED: GL11.glColor4d(0.55, 0.98, 0.81, 0.25); break;
-				        	case Block.REMOVED: GL11.glColor4d(1.0, 0.24, 0.2, 0.25); break;
-				        	case Block.PLACED: GL11.glColor4d(1.0, 0.85, 0.2, 0.25); break;
-				        }
-			        	drawCrossedOutlinedBoundingBox(bb);
-			        	switch(blockType){
-				        	case Block.USED: GL11.glColor4d(0.55, 0.98, 0.81, 0.25); break;
-				        	case Block.REMOVED: GL11.glColor4d(1.0, 0.24, 0.2, 0.25); break;
-				        	case Block.PLACED: GL11.glColor4d(1.0, 0.85, 0.2, 0.25); break;
-			        	}
-			        	drawBoundingBoxQuads(bb);
-			        	
-			        	GL11.glPopMatrix();
-	
-			        	GL11.glDepthMask(true);
-				        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-				        GL11.glDisable(GL11.GL_BLEND);
-				        GL11.glEnable(GL11.GL_TEXTURE_2D);
-				        GL11.glEnable(GL11.GL_DEPTH_TEST);
-				        GL11.glDisable(GL13.GL_MULTISAMPLE);
-				        GL11.glEnable(GL11.GL_LIGHTING);
+				if(SV.instance.blockList != null){
+					for(Block b : SV.instance.blockList){
+						if(b.getDistance() < SV.settings.renderDistance * 16){
+					        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+					        GL11.glLineWidth(5F);
+					        GL11.glDisable(GL11.GL_LIGHTING);
+					        GL11.glDisable(GL11.GL_DEPTH_TEST);
+					        GL11.glDisable(GL11.GL_TEXTURE_2D);
+					        GL11.glEnable(GL11.GL_BLEND);
+					        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+					        GL11.glEnable(GL13.GL_MULTISAMPLE);
+					        GL11.glAlphaFunc(GL11.GL_GREATER, 0.09F);
+					        GL11.glDepthMask(false);
+					          
+					        GL11.glPushMatrix();
+					        double px = -(RenderManager.renderPosX - b.x);
+					        double py = -(RenderManager.renderPosY - b.y);
+					        double pz = -(RenderManager.renderPosZ - b.z);
+					        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(px - 0.01, py - 0.01, pz - 0.01, px + 0.99, py + 0.99, pz + 0.99);
+					        
+					        int blockType = b.type;
+					        switch(blockType){
+					        	case Block.USED: GL11.glColor4d(0.55, 0.98, 0.81, 0.25); break;
+					        	case Block.REMOVED: GL11.glColor4d(1.0, 0.24, 0.2, 0.25); break;
+					        	case Block.PLACED: GL11.glColor4d(1.0, 0.85, 0.2, 0.25); break;
+					        }
+				        	drawCrossedOutlinedBoundingBox(bb);
+				        	switch(blockType){
+					        	case Block.USED: GL11.glColor4d(0.55, 0.98, 0.81, 0.25); break;
+					        	case Block.REMOVED: GL11.glColor4d(1.0, 0.24, 0.2, 0.25); break;
+					        	case Block.PLACED: GL11.glColor4d(1.0, 0.85, 0.2, 0.25); break;
+				        	}
+				        	drawBoundingBoxQuads(bb);
+				        	
+				        	GL11.glPopMatrix();
+		
+				        	GL11.glDepthMask(true);
+					        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+					        GL11.glDisable(GL11.GL_BLEND);
+					        GL11.glEnable(GL11.GL_TEXTURE_2D);
+					        GL11.glEnable(GL11.GL_DEPTH_TEST);
+					        GL11.glDisable(GL13.GL_MULTISAMPLE);
+					        GL11.glEnable(GL11.GL_LIGHTING);
+						}
 					}
 				}
 			}catch(NullPointerException e){System.out.println("An exception has been thrown!\n" + e.getMessage());}
