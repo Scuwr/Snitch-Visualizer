@@ -48,6 +48,8 @@ public class GuiSnitchList extends GuiListExtended
         {
         	Snitch snitch = SV.instance.snitchList.get(k);
 
+        	if(snitch.name.length() > 20) snitch.name = snitch.name.substring(0, 19) + "~";
+        	if(snitch.ctGroup.length() > 20) snitch.ctGroup = snitch.ctGroup.substring(0, 19) + "~";
             int l = mc.fontRenderer.getStringWidth("-9999  -9999  -9999  " + snitch.ctGroup + "  " + snitch.name + "  ");
             if (l > this.entryWidth) this.entryWidth = l;
             
@@ -141,8 +143,7 @@ public class GuiSnitchList extends GuiListExtended
             this.yCoord = Integer.toString(snitch.y);
             this.zCoord = Integer.toString(snitch.z);
             this.ctGroup = snitch.ctGroup;
-            if(snitch.name.length() > 17) this.snitchName = snitch.name.substring(0, 16) + "~";
-            else this.snitchName = snitch.name;
+            this.snitchName = snitch.name;
             this.btnRemove = new GuiButton(0, 0, 0, 50, 18, I18n.format("Remove", new Object[0]));
         }
 

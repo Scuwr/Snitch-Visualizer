@@ -60,7 +60,7 @@ public class GuiEditSnitches extends GuiScreen{
 		this.guiSnitchList = new GuiSnitchList(this, this.mc);
 		
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height + 8 + b0, StatCollector.translateToLocal("gui.done")));
+		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height - 8 + b0, StatCollector.translateToLocal("gui.done")));
 	}
 	
 	public void actionPerformed(GuiButton button){
