@@ -80,7 +80,7 @@ public class GuiSnitchList extends GuiListExtended
 
     protected int getScrollBarX()
     {
-    	return this.width - 28;
+    	return this.width - 16;
         //return super.getScrollBarX() + 15;
     }
 
@@ -89,8 +89,7 @@ public class GuiSnitchList extends GuiListExtended
      */
     public int getListWidth()
     {
-        return this.width - 48;
-    	//return super.getListWidth() + 32;
+        return this.width;
     }
 
     @SideOnly(Side.CLIENT)
@@ -106,14 +105,12 @@ public class GuiSnitchList extends GuiListExtended
         public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
         {
             //GuiSnitchList.this.mc.fontRenderer.drawString(this.categoryName, GuiSnitchList.this.mc.currentScreen.width / 2 - this.categoryWidth / 2, p_148279_3_ + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        
-        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48 ;
         	
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xHeader)) / 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yHeader)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zHeader)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.groupHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.groupHeader)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.nameHeader, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.nameHeader)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xHeader, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xHeader) / 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yHeader, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yHeader) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zHeader, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zHeader) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.groupHeader, xPosition + GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.groupHeader) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.nameHeader, xPosition  + GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.nameHeader) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT - 1, 16777215);
         }
         
         public boolean mousePressed(int p_148278_1_, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
@@ -148,16 +145,14 @@ public class GuiSnitchList extends GuiListExtended
         }
 
         public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_, Tessellator p_148279_6_, int p_148279_7_, int p_148279_8_, boolean p_148279_9_)
-        {
-        	xPosition = xPosition + GuiSnitchList.this.width / 2 + 48;
+        {        	
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xCoord) / 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yCoord) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition + GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zCoord) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition + GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.ctGroup) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
+        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchName, xPosition + GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.snitchName) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
         	
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.xCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.xCoord)) / 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.yCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.yCoord)) / 2 + GuiSnitchList.this.coordWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.zCoord, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.coordWidth - mc.fontRenderer.getStringWidth(this.zCoord)) / 2 + GuiSnitchList.this.coordWidth * 2, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.ctGroup, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.ctGroupWidth - mc.fontRenderer.getStringWidth(this.ctGroup)) / 2 + GuiSnitchList.this.coordWidth * 3, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	GuiSnitchList.this.mc.fontRenderer.drawString(this.snitchName, xPosition - GuiSnitchList.this.entryWidth + (GuiSnitchList.this.nameWidth - mc.fontRenderer.getStringWidth(this.snitchName)) / 2 + GuiSnitchList.this.coordWidth * 3 + GuiSnitchList.this.ctGroupWidth, yPosition + p_148279_5_ / 2 - GuiSnitchList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-        	
-            this.btnRemove.xPosition = xPosition + 10;
+            this.btnRemove.xPosition = xPosition + GuiSnitchList.this.entryWidth;
             this.btnRemove.yPosition = yPosition;
             this.btnRemove.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
         }
