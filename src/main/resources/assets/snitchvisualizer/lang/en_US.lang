@@ -1,7 +1,7 @@
 
 svoptions.listUpdate=Force Snitchlist Update
-svoptions.updateDetection=Update Detection
+svoptions.updateDetection=Auto Update
 svoptions.renderDistance=Render Distance
 svoptions.renderEnabled=Rendering
 svoptions.keyBinding=SV Settings Keybinding
-svoptions.editSnitchList= Edit Snitchlist
+svoptions.editList= Edit List

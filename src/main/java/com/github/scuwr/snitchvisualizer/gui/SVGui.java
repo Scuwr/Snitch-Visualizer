@@ -60,10 +60,11 @@ public class SVGui extends GuiScreen{
 		
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
-		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 48 + b0, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 72 + b0, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
+		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + b0, StatCollector.translateToLocal("svoptions.snitchReport")));
+		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 72 + b0, 98, 18, SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
+		this.buttonList.add(new GuiButton(2, this.width / 2 + 2, this.height / 4 + 72 + b0, 98, 18, SV.settings.getKeyBinding(SVSettings.Options.RENDER_ENABLED)));
 		this.buttonList.add(new SVGuiOptionSlider(100, this.width / 2 - 100, this.height / 4 + 96 +b0, renderDistance));
-		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("svoptions.editSnitchList")));
+		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height / 4 + 120 + b0, StatCollector.translateToLocal("svoptions.editList")));
 		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 120 + 24 + b0, StatCollector.translateToLocal("gui.done")));
 	}
 	
