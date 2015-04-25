@@ -1,5 +1,7 @@
 package com.github.scuwr.snitchvisualizer.gui;
 
+import java.util.ArrayList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiControls;
@@ -60,7 +62,8 @@ public class GuiEditSnitches extends GuiScreen{
 		this.guiSnitchList = new GuiSnitchList(this, this.mc);
 		
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height - 8 + b0, StatCollector.translateToLocal("gui.done")));
+		this.buttonList.add(new GuiButton(4, this.width / 2 + 2, this.height - 4 + b0, 98, 18, StatCollector.translateToLocal("gui.done")));
+		this.buttonList.add(new GuiButton(5, this.width/2 - 100, this.height - 4 + b0, 98, 18, StatCollector.translateToLocal("svoptions.resetBlockList")));
 	}
 	
 	public void actionPerformed(GuiButton button){
@@ -71,6 +74,9 @@ public class GuiEditSnitches extends GuiScreen{
                 SVFileIOHandler.saveSettings();
                 SVFileIOHandler.saveList();
                 break;
+			case 5:
+				SV.instance.blockList = new ArrayList();
+				button.enabled = false;
 		}
 	}
 	

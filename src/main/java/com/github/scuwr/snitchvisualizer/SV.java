@@ -54,6 +54,7 @@ public class SV {
 		logger.info("Loading: preInit");
 		instance = this;
 		this.snitchList = new ArrayList();
+		this.blockList = new ArrayList();
 		this.settings = new SVSettings(this);
 		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
