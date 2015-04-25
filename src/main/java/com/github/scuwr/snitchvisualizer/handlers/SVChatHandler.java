@@ -1,5 +1,6 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
@@ -22,8 +23,10 @@ public class SVChatHandler {
 
 	public static boolean updateSnitchList = false;
 	public static boolean snitchReport = false;
+	public static String snitchReportName = "";
 	public static int jalistIndex = 1;
 	public static int jainfoIndex = 1;
+	public static ArrayList<Block> tempList;
 	
 	@SubscribeEvent
 	public void onChat(ClientChatReceivedEvent event){
@@ -40,7 +43,7 @@ public class SVChatHandler {
 				parseBlock(msg);
 			}
 			else if(msg.contains("Entry")){
-				parseEntry(msg);
+				if(snitchReport) parseEntry(msg);
 			}
 			else if(msg.contains("Snitch Log for") || msg.contains("Page 1 is empty for snitch")){
 				// export jainfo to csv
@@ -52,6 +55,11 @@ public class SVChatHandler {
 				jalistIndex = 1;
 				jainfoIndex = 1;
 				updateSnitchList = false;
+				if(snitchReport){
+					snitchReport = false;
+					snitchReportName = "";
+					SVFileIOHandler.saveSnitchReport();
+				}
 			}
 			else if(msg.contains("TPS from last 1m, 5m, 15m:")){
 				ParseTPS(msg);

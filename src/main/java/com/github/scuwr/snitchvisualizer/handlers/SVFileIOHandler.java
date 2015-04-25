@@ -162,4 +162,9 @@ public class SVFileIOHandler {
 		Date oldDate = new Date();
 	    return (l - oldDate.getTime()) / Snitch.HOURS_IN_MILLIS;
 	}
+
+	public static void saveSnitchReport() {
+		// TODO Auto-generated method stub
+		
+	}
 }

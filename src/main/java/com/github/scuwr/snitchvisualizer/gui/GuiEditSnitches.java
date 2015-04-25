@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.SVSettings;
+import com.github.scuwr.snitchvisualizer.classobjects.Block;
 import com.github.scuwr.snitchvisualizer.handlers.SVChatHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
 
@@ -75,7 +76,7 @@ public class GuiEditSnitches extends GuiScreen{
                 SVFileIOHandler.saveList();
                 break;
 			case 5:
-				SV.instance.blockList = new ArrayList();
+				SV.instance.blockList = new ArrayList<Block>();
 				button.enabled = false;
 		}
 	}

@@ -1,5 +1,7 @@
 package com.github.scuwr.snitchvisualizer.gui;
 
+import java.util.ArrayList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiControls;
@@ -16,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.SVSettings;
+import com.github.scuwr.snitchvisualizer.classobjects.Block;
 import com.github.scuwr.snitchvisualizer.handlers.SVChatHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
 
@@ -94,6 +97,12 @@ public class SVGui extends GuiScreen{
                 this.mc.setIngameFocus();
                 SVFileIOHandler.saveSettings();
                 break;
+			case 5:
+				SVChatHandler.tempList = new ArrayList<Block>();
+				SVChatHandler.snitchReport = true;
+				this.mc.displayGuiScreen((GuiScreen)null);
+                this.mc.setIngameFocus();
+				break;
 		}
 	}
 }

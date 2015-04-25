@@ -43,7 +43,7 @@ public class SVTickHandler{
 				SVChatHandler.jalistIndex++;
 				start = new Date();
 			}
-			if(SVPlayerHandler.updateSnitchName){
+			if(SVPlayerHandler.updateSnitchName || SVChatHandler.snitchReport){
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo " + SVChatHandler.jainfoIndex);
 				if(SVChatHandler.snitchReport) SVChatHandler.jainfoIndex++;
 				start = new Date();
