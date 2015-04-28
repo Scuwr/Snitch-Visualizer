@@ -48,8 +48,18 @@ public class SVChatHandler {
 			else if(msg.contains("Snitch Log for") || msg.contains("Page 1 is empty for snitch")){
 				// export jainfo to csv
 				Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
-				n.name = parseSnitchName(msg);
+				String name = parseSnitchName(msg);
+				n.name = name;
 				SVFileIOHandler.saveList();
+				
+				if(snitchReport){
+					if(snitchReportName.equals("")) snitchReportName = name;
+					if(!snitchReportName.equals(name)){
+						snitchReport = false;
+						SVFileIOHandler.saveSnitchReport(snitchReportName);
+						snitchReportName = "";
+					}
+				}
 			}
 			else if(msg.contains("Unknown command") || msg.contains(" is empty")){
 				jalistIndex = 1;
@@ -57,8 +67,8 @@ public class SVChatHandler {
 				updateSnitchList = false;
 				if(snitchReport){
 					snitchReport = false;
+					SVFileIOHandler.saveSnitchReport(snitchReportName);
 					snitchReportName = "";
-					SVFileIOHandler.saveSnitchReport();
 				}
 			}
 			else if(msg.contains("TPS from last 1m, 5m, 15m:")){
@@ -151,7 +161,10 @@ public class SVChatHandler {
 				int y = Integer.parseInt(tokens[6]);
 				int z = Integer.parseInt(tokens[7]);
 			
-				if(type != 0) SV.instance.blockList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
+				if(type != 0){
+					if(!snitchReport) SV.instance.blockList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
+					else tempList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
+				}
 			}catch(NumberFormatException e){
 				SV.instance.logger.error("Failed to parse block from chat!");
 			}catch(NullPointerException e){
@@ -165,7 +178,7 @@ public class SVChatHandler {
 			msg = msg.substring(msg.indexOf(">") + 1);
 			SV.instance.logger.info("Parsing string " + msg);
 			String[] tokens = msg.split(" +");
-			if(tokens[2].equals("Entry")) SV.instance.blockList.add(new Block(0, 0, 0, 4, tokens[1], tokens[3] + " " + tokens[4]));
+			if(tokens[2].equals("Entry")) tempList.add(new Block(0, 0, 0, 4, tokens[1], tokens[3] + " " + tokens[4]));
 		}
 	}
 	

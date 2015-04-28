@@ -10,6 +10,7 @@ import java.util.Date;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.SVSettings;
+import com.github.scuwr.snitchvisualizer.classobjects.Block;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
@@ -24,10 +25,14 @@ import net.minecraft.util.StatCollector;
  */
 public class SVFileIOHandler {
 
+	private static String folderDir = "/mods/Snitch-Visualizer";
+	private static String folderReport = "/Reports";
+	
 	public static File oldSnitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/SnitchList.txt");
-	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer" + "/SnitchList.csv");
-	public static File svSettings = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer" + "/SVSettings.txt");
-	public static File svDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/mods/Snitch-Visualizer");
+	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + "/SnitchList.csv");
+	public static File svSettings = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + "/SVSettings.txt");
+	public static File reportDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport);
+	public static File svDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir);
 	public static boolean isDone = false;
 	
 	public static void saveList(){
@@ -163,8 +168,48 @@ public class SVFileIOHandler {
 	    return (l - oldDate.getTime()) / Snitch.HOURS_IN_MILLIS;
 	}
 
-	public static void saveSnitchReport() {
-		// TODO Auto-generated method stub
-		
+	public static void saveSnitchReport(String snitchName) {
+		isDone = false;
+		if(!snitchName.equals("")){
+			try {
+				if(!svDir.exists()){
+					SV.instance.logger.info("Creating Snitch Visualizer Directory");
+					if(!svDir.mkdirs()){
+						SV.instance.logger.error("Failed to create Snitch Visualizer Directory!");
+					}
+				}			
+				if(!reportDir.exists()){				
+					SV.instance.logger.info("Creating Snitch Report Directory");
+					reportDir.createNewFile();
+				}
+				File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport + "/" + snitchName + ".csv");
+				snitchReport.createNewFile();
+				
+				BufferedWriter bw = new BufferedWriter(new FileWriter(snitchReport));
+				SV.instance.logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
+				for(Block b : SVChatHandler.tempList){
+					String type = "";
+					switch(b.type){
+					case 1:
+						type = "Used";
+						break;
+					case 2:
+						type = "Removed";
+						break;
+					case 3:
+						type = "Placed";
+						break;
+					case 4:
+						type = "Entry";
+							break;
+					}
+					bw.write(b.playerName + "," + type + "," + b.details + "," + b.x + "," + b.y + "," + b.z + "," +"\r\n");
+				}
+				bw.close();
+			} catch (IOException e){
+				SV.instance.logger.error("Failed to write to Snitch Report!\n" + e.getMessage());
+			}
+		}
+		isDone = true;
 	}
 }
