@@ -1,29 +1,18 @@
 package com.github.scuwr.snitchvisualizer.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiKeyBindingList;
-import net.minecraft.client.gui.GuiOptionSlider;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.scuwr.snitchvisualizer.SV;
-import com.github.scuwr.snitchvisualizer.SVSettings;
 import com.github.scuwr.snitchvisualizer.classobjects.Block;
-import com.github.scuwr.snitchvisualizer.handlers.SVChatHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Defines the on-screen gui
@@ -82,17 +71,13 @@ public class GuiEditSnitches extends GuiScreen{
 	}
 	
 	protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_){		
-        if (p_73864_3_ != 0 || !this.guiSnitchList.func_148179_a(p_73864_1_, p_73864_2_, p_73864_3_))
+        if (p_73864_3_ != 0)
         {
-            super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-        }
-    }
-	
-	protected void mouseMovedOrUp(int p_146286_1_, int p_146286_2_, int p_146286_3_)
-    {
-        if (p_146286_3_ != 0 || !this.guiSnitchList.func_148181_b(p_146286_1_, p_146286_2_, p_146286_3_))
-        {
-            super.mouseMovedOrUp(p_146286_1_, p_146286_2_, p_146286_3_);
+            try {
+				super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
 }

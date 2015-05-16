@@ -3,7 +3,7 @@ package com.github.scuwr.snitchvisualizer.classobjects;
 import java.util.Date;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 
 /**
  * Defines the Snitch object for use by the mod
@@ -76,7 +76,7 @@ public class Snitch implements Comparable<Snitch>{
 	 * @return distance from player to Snitch object
 	 */
 	public double getDistance(){
-		EntityClientPlayerMP thePlayer = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 		return Math.sqrt(Math.pow((thePlayer.posX - this.x), 2) + Math.pow((thePlayer.posZ - this.z), 2));
 	}
 	

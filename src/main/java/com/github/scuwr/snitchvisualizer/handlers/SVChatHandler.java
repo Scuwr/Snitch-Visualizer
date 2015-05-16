@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-import com.github.scuwr.snitchvisualizer.SV;
-import com.github.scuwr.snitchvisualizer.classobjects.Block;
-import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import com.github.scuwr.snitchvisualizer.SV;
+import com.github.scuwr.snitchvisualizer.classobjects.Block;
+import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 /**
  * Chat handler for Snitch Visualizer
