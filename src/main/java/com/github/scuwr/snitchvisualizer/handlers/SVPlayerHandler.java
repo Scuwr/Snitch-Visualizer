@@ -1,18 +1,15 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
 import java.util.ArrayList;
-import java.util.Date;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 /**
  * Player Handler for Snitch Visualizer
@@ -29,7 +26,7 @@ public class SVPlayerHandler {
 	
 	@SubscribeEvent
 	public void onPlayerEvent(ClientTickEvent event){
-		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		if(player != null){
 			if(Math.floor(player.prevPosX) != Math.floor(player.posX) || Math.floor(player.prevPosY) != Math.floor(player.posY) || Math.floor(player.prevPosZ) != Math.floor(player.posZ)){
 				player.prevPosX = player.posX;
@@ -40,7 +37,7 @@ public class SVPlayerHandler {
 		}
 	}
 	
-	public void onPlayerMove(EntityClientPlayerMP player){
+	public void onPlayerMove(EntityPlayerSP player){
 		if(SV.settings.updateDetection) checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList, false);
 	}
 	/**

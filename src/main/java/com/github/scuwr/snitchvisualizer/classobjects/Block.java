@@ -1,7 +1,7 @@
 package com.github.scuwr.snitchvisualizer.classobjects;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 
 public class Block {
 	public int x;
@@ -26,7 +26,7 @@ public class Block {
 	}
 	
 	public double getDistance(){
-		EntityClientPlayerMP thePlayer = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 		return Math.sqrt(Math.pow((thePlayer.posX - this.x), 2) + Math.pow((thePlayer.posZ - this.z), 2));
 	}
 }

@@ -2,9 +2,16 @@ package com.github.scuwr.snitchvisualizer;
 
 import java.util.ArrayList;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
 
 import com.github.scuwr.snitchvisualizer.classobjects.Block;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
@@ -14,19 +21,6 @@ import com.github.scuwr.snitchvisualizer.handlers.SVKeyHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVPlayerHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVRenderHandler;
 import com.github.scuwr.snitchvisualizer.handlers.SVTickHandler;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
 
 /**
  * Main class file for Snitch Visualizer
@@ -39,7 +33,7 @@ public class SV {
 	
 	public static final String MODID = "scuwrsnitchvisualizer";
 	public static final String MODNAME = "Snitch Visualizer";
-	public static final String MODVERSION = "1.1.2";
+	public static final String MODVERSION = "1.1.3";
 	
 	@Instance("SV")
 	public static SV instance;

@@ -3,11 +3,8 @@ package com.github.scuwr.snitchvisualizer.handlers;
 import java.util.Date;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
  * Tick Handler for Snitch Visualizer
