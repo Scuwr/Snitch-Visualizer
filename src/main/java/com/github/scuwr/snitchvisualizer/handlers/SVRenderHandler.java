@@ -1,7 +1,9 @@
 package com.github.scuwr.snitchvisualizer.handlers;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -21,14 +23,20 @@ import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
  */
 public class SVRenderHandler {
 	
-	private double renderPosX = ReflectionHandler.getRenderPos("renderPosX");
-	private double renderPosY = ReflectionHandler.getRenderPos("renderPosY");
-	private double renderPosZ = ReflectionHandler.getRenderPos("renderPosZ");
+	private Minecraft mc = Minecraft.getMinecraft();
 	
 	@SubscribeEvent
 	public void eventRenderWorld(RenderWorldLastEvent event){
 		if(SVFileIOHandler.isDone && SV.settings.renderEnabled){
 			try{
+				RenderManager rm = mc.getRenderManager();
+				
+				float partialTickTime = event.partialTicks;
+				
+				double renderPosX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
+				double renderPosY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
+				double renderPosZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+				
 				for(Snitch n : SV.instance.snitchList){
 					if(n.getDistance() < SV.settings.renderDistance * 16){
 						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
