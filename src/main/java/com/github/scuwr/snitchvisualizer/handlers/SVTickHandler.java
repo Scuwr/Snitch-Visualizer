@@ -28,12 +28,6 @@ public class SVTickHandler{
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event){
 		new SVPlayerHandler().onPlayerEvent(event);
-		/*if(playerTicks <= 40) playerTicks++;
-		if(SVChatHandler.updateSnitchList && playerTicks > 40){
-			Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
-			playerTicks = 0;
-			SVChatHandler.jalistIndex++;
-		}*/
 		if(((new Date()).getTime() - (waitTime*1000)) > start.getTime()){
 			if(SVChatHandler.updateSnitchList){
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
@@ -44,6 +38,9 @@ public class SVTickHandler{
 				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo " + SVChatHandler.jainfoIndex);
 				if(SVChatHandler.snitchReport) SVChatHandler.jainfoIndex++;
 				start = new Date();
+				if (SVPlayerHandler.updateSnitchName) { // Do this once then stop.
+					SVPlayerHandler.updateSnitchName = false;
+				}
 			}
 		}
 		

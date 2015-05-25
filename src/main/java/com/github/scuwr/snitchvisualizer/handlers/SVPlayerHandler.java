@@ -75,6 +75,7 @@ public class SVPlayerHandler {
 			Snitch n = SV.instance.snitchList.get(index);
 			n.cullTime = Snitch.changeToDate(672.0);
 			playerIsInSnitchArea = true;
+			updateSnitchName = false;
 			if(removeSnitch){
 				SV.instance.snitchList.remove(index);
 				SV.instance.logger.info("Snitch Removed!");
@@ -82,9 +83,6 @@ public class SVPlayerHandler {
 			}
 			else if (n.name.equals("Unknown")){
 				updateSnitchName = true;
-			}
-			else if (!n.name.equals("Unknown")){
-				updateSnitchName = false;
 			}
 		}
 		else if (playerIsInSnitchArea){
