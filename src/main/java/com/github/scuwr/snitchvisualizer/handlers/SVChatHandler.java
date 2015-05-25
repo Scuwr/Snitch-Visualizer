@@ -54,6 +54,9 @@ public class SVChatHandler {
 					Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
 					String name = parseSnitchName(msg);
 					n.name = name;
+					if (SVPlayerHandler.updateSnitchName) {
+						SVPlayerHandler.updateSnitchName = false; // done!
+					}
 					SVFileIOHandler.saveList();
 					
 					if(snitchReport){
