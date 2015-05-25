@@ -43,6 +43,8 @@ public class SVPlayerHandler {
 	/**
 	 * Snitch detection is now 100% accurate to my knowledge, and shows no signs of missing snitches.
 	 * 
+	 * Editorial TODO: Snitches will be missed with very full snitch listings. Will be working on this. (PD 5/2015)
+	 *
 	 * @param x pos
 	 * @param y pos
 	 * @param z pos
