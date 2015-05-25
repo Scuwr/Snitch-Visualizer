@@ -46,6 +46,7 @@ public class GuiEditSnitches extends GuiScreen{
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void initGui(){
 		byte b0 = -16;
 		

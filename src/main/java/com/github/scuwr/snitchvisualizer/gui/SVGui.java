@@ -28,7 +28,6 @@ public class SVGui extends GuiScreen{
 	
 	private static final SVSettings.Options renderDistance = SVSettings.Options.RENDER_DISTANCE;
 	
-	private GuiSnitchList keyBindingList;
 	public KeyBinding buttonId = null;
 	
 	public SVGui(GuiScreen guiscreen){
@@ -48,9 +47,9 @@ public class SVGui extends GuiScreen{
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void initGui(){
 		byte b0 = -16;
-		
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector.translateToLocal("svoptions.listUpdate")));
 		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + b0, StatCollector.translateToLocal("svoptions.snitchReport")));

@@ -38,6 +38,9 @@ public class SV {
 	@Instance("SV")
 	public static SV instance;
 	
+	/**
+	 * TODO replace with better structure. TreeSet won't work.
+	 */
 	public ArrayList<Snitch> snitchList;
 	public ArrayList<Block> blockList;
 	public static SVSettings settings;
@@ -45,22 +48,22 @@ public class SV {
 	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		logger.info("Loading: preInit");
+		logger.info("Loading: SnitchVisualizer preInit");
 		instance = this;
-		this.snitchList = new ArrayList();
-		this.blockList = new ArrayList();
-		this.settings = new SVSettings(this);
+		this.snitchList = new ArrayList<Snitch>();
+		this.blockList = new ArrayList<Block>();
+		SV.settings = new SVSettings(this);
 		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
 		
-		if(this.snitchList instanceof ArrayList){
+		if(!(this.snitchList instanceof ArrayList)){
 			logger.info("Snitch List failed to instantiate!");
 		}
 	}
 	
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event){
-		logger.info("Loading: init");
+		logger.info("Loading: SnitchVisualizer init");
 		FMLCommonHandler.instance().bus().register(new SVKeyHandler());
 		MinecraftForge.EVENT_BUS.register(new SVRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SVChatHandler());

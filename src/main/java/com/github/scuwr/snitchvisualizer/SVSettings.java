@@ -1,15 +1,9 @@
 package com.github.scuwr.snitchvisualizer;
 
-import java.io.File;
-
 import org.lwjgl.input.Keyboard;
 
-import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
-import net.minecraft.util.StringTranslate;
 
 public class SVSettings{
 
@@ -151,7 +145,8 @@ public class SVSettings{
         }
     }
 
-    private float parseFloat(String s){
+    @SuppressWarnings("unused")
+	private float parseFloat(String s){
         if (s.equals("true")){
             return 1.0F;
         }

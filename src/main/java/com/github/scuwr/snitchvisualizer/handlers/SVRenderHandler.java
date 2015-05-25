@@ -3,7 +3,6 @@ package com.github.scuwr.snitchvisualizer.handlers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -29,8 +28,6 @@ public class SVRenderHandler {
 	public void eventRenderWorld(RenderWorldLastEvent event){
 		if(SVFileIOHandler.isDone && SV.settings.renderEnabled){
 			try{
-				RenderManager rm = mc.getRenderManager();
-				
 				float partialTickTime = event.partialTicks;
 				
 				double renderPosX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);

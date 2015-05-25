@@ -8,13 +8,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.SVSettings;
 import com.github.scuwr.snitchvisualizer.classobjects.Block;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.StatCollector;
 
 /**
@@ -35,28 +37,30 @@ public class SVFileIOHandler {
 	public static File svDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir);
 	public static boolean isDone = false;
 	
+	private static Logger logger = LogManager.getLogger("SnitchVisualizer");
+	
 	public static void saveList(){
 		isDone = false;
 		try {
 			if(!svDir.exists()){
-				SV.instance.logger.info("Creating Snitch Visualizer Directory");
+				logger.info("Creating Snitch Visualizer Directory");
 				if(!svDir.mkdirs()){
-					SV.instance.logger.error("Failed to create Snitch Visualizer Directory!");
+					logger.error("Failed to create Snitch Visualizer Directory!");
 				}
 			}			
 			if(!snitchList.exists()){				
-				SV.instance.logger.info("Creating new file: SnitchList.csv");
+				logger.info("Creating new file: SnitchList.csv");
 				snitchList.createNewFile();
 			}
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
-			SV.instance.logger.info("Saving Snitch list.. " + SV.instance.snitchList.size() + " snitches to save.");
+			logger.info("Saving Snitch list.. " + SV.instance.snitchList.size() + " snitches to save.");
 			for(Snitch n : SV.instance.snitchList){
 				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.name + "," + "\r\n");
 			}
 			bw.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to write to SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to write to SnitchList.csv!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -65,13 +69,13 @@ public class SVFileIOHandler {
 		isDone = false;
 		try{
 			if(!svDir.exists()){
-				SV.instance.logger.info("Creating Snitch Visualizer Directory");
+				logger.info("Creating Snitch Visualizer Directory");
 				if(!svDir.mkdirs()){
-					SV.instance.logger.error("Failed to create Snitch Visualizer Directory!");
+					logger.error("Failed to create Snitch Visualizer Directory!");
 				}
 			}			
 			if(!svSettings.exists()){				
-				SV.instance.logger.info("Creating new file: SVSettings.txt");
+				logger.info("Creating new file: SVSettings.txt");
 				svSettings.createNewFile();
 			}
 			
@@ -82,7 +86,7 @@ public class SVFileIOHandler {
 
 			bw.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to write to SVSettings.txt!\n" + e.getMessage());
+			logger.error("Failed to write to SVSettings.txt!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -115,11 +119,11 @@ public class SVFileIOHandler {
 				saveList();
 			}
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
 		} catch (NullPointerException e){
-			SV.instance.logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
+			logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
 		} catch (NumberFormatException e){
-			SV.instance.logger.error("Could not parse integer from list!\n" + e.getMessage());
+			logger.error("Could not parse integer from list!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -128,7 +132,7 @@ public class SVFileIOHandler {
 		isDone = false;
 		try{			
 			if(!svSettings.exists()) saveSettings();
-			SV.instance.logger.info("Loading Settings..");
+			logger.info("Loading Settings..");
 			
 			BufferedReader br = new BufferedReader(new FileReader(svSettings));
 			String line = br.readLine();
@@ -156,9 +160,9 @@ public class SVFileIOHandler {
 			}
 			br.close();
 		} catch (IOException e){
-			SV.instance.logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
 		} catch (NullPointerException e){
-			SV.instance.logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
+			logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
 		}
 		isDone = true;
 	}
@@ -173,20 +177,20 @@ public class SVFileIOHandler {
 		if(!snitchName.equals("")){
 			try {
 				if(!svDir.exists()){
-					SV.instance.logger.info("Creating Snitch Visualizer Directory");
+					logger.info("Creating Snitch Visualizer Directory");
 					if(!svDir.mkdirs()){
-						SV.instance.logger.error("Failed to create Snitch Visualizer Directory!");
+						logger.error("Failed to create Snitch Visualizer Directory!");
 					}
 				}			
 				if(!reportDir.exists()){				
-					SV.instance.logger.info("Creating Snitch Report Directory");
+					logger.info("Creating Snitch Report Directory");
 					reportDir.createNewFile();
 				}
 				File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport + "/" + snitchName + ".csv");
 				snitchReport.createNewFile();
 				
 				BufferedWriter bw = new BufferedWriter(new FileWriter(snitchReport));
-				SV.instance.logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
+				logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
 				for(Block b : SVChatHandler.tempList){
 					String type = "";
 					switch(b.type){
@@ -207,7 +211,7 @@ public class SVFileIOHandler {
 				}
 				bw.close();
 			} catch (IOException e){
-				SV.instance.logger.error("Failed to write to Snitch Report!\n" + e.getMessage());
+				logger.error("Failed to write to Snitch Report!\n" + e.getMessage());
 			}
 		}
 		isDone = true;
