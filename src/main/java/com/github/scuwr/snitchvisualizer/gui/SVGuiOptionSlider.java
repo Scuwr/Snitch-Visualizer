@@ -32,7 +32,6 @@ public class SVGuiOptionSlider extends GuiButton
         this.option = option;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
-        Minecraft minecraft = Minecraft.getMinecraft();
         this.field_146134_p = option.normalizeValue(SV.settings.getOptionFloatValue(option));
         this.displayString = SV.settings.getKeyBinding(option);
     }

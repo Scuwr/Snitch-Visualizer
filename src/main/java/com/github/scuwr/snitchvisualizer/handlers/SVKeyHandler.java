@@ -20,28 +20,29 @@ import com.github.scuwr.snitchvisualizer.gui.SVGui;
  * @author Scuwr
  *
  */
-public class SVKeyHandler{
-	
-	public KeyBinding keySVGui = new KeyBinding("SV Settings", (int)SV.settings.svSettingsKey, "Snitch Visualizer");
+public class SVKeyHandler {
+
+	public KeyBinding keySVGui = new KeyBinding("SV Settings", (int) SV.settings.svSettingsKey, "Snitch Visualizer");
 	public KeyBinding keyRemoveSnitch = new KeyBinding("Remove Snitch", Keyboard.KEY_R, "Snitch Visualizer");
-	
+
 	private static Logger logger = LogManager.getLogger("SnitchVisualizer");
-	
-	public SVKeyHandler(){
+
+	public SVKeyHandler() {
 		ClientRegistry.registerKeyBinding(keySVGui);
 		ClientRegistry.registerKeyBinding(keyRemoveSnitch);
 	}
-	
+
 	@SubscribeEvent
-	public void onKeyPress(InputEvent.KeyInputEvent event){
-		if(keySVGui.isPressed()){
+	public void onKeyPress(InputEvent.KeyInputEvent event) {
+		if (keySVGui.isPressed()) {
 			Minecraft.getMinecraft().displayGuiScreen(new SVGui(null));
 		}
-		if(keyRemoveSnitch.isPressed() && SV.settings.renderEnabled){
+		if (keyRemoveSnitch.isPressed() && SV.settings.renderEnabled) {
 			logger.info("Delete Snitch Key Pressed!");
 			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-			SVPlayerHandler.checkSnitchArea((int)Math.floor(player.posX), (int)Math.floor(player.posY) - 1, (int)Math.floor(player.posZ), SV.instance.snitchList, true);
+			SVPlayerHandler.checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+					(int) Math.floor(player.posZ), SV.instance.snitchList, true);
 		}
 	}
-	
+
 }

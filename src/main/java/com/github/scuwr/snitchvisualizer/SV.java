@@ -30,14 +30,14 @@ import com.github.scuwr.snitchvisualizer.handlers.SVTickHandler;
  */
 @Mod(modid = SV.MODID, name = SV.MODNAME, version = SV.MODVERSION)
 public class SV {
-	
+
 	public static final String MODID = "scuwrsnitchvisualizer";
 	public static final String MODNAME = "Snitch Visualizer";
 	public static final String MODVERSION = "1.1.4";
-	
+
 	@Instance("SV")
 	public static SV instance;
-	
+
 	/**
 	 * TODO replace with better structure. TreeSet won't work.
 	 */
@@ -45,9 +45,9 @@ public class SV {
 	public ArrayList<Block> blockList;
 	public static SVSettings settings;
 	public static Logger logger = LogManager.getLogger("SnitchVisualizer");
-	
+
 	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event){
+	public void preInit(FMLPreInitializationEvent event) {
 		logger.info("Loading: SnitchVisualizer preInit");
 		instance = this;
 		this.snitchList = new ArrayList<Snitch>();
@@ -55,14 +55,14 @@ public class SV {
 		SV.settings = new SVSettings(this);
 		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
-		
-		if(!(this.snitchList instanceof ArrayList)){
+
+		if (!(this.snitchList instanceof ArrayList)) {
 			logger.info("Snitch List failed to instantiate!");
 		}
 	}
-	
+
 	@Mod.EventHandler
-	public void init(FMLInitializationEvent event){
+	public void init(FMLInitializationEvent event) {
 		logger.info("Loading: SnitchVisualizer init");
 		FMLCommonHandler.instance().bus().register(new SVKeyHandler());
 		MinecraftForge.EVENT_BUS.register(new SVRenderHandler());
@@ -70,9 +70,9 @@ public class SV {
 		MinecraftForge.EVENT_BUS.register(new SVPlayerHandler());
 		FMLCommonHandler.instance().bus().register(new SVTickHandler());
 	}
-	
+
 	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event){
-		
+	public void postInit(FMLPostInitializationEvent event) {
+
 	}
 }
