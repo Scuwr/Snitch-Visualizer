@@ -52,24 +52,35 @@ public class SVChatHandler {
 					parseEntry(msg);
 			} else if (msg.contains("Snitch Log for") || msg.contains("Page 1 is empty for snitch")) {
 				// export jainfo to csv
-				if (SVPlayerHandler.snitchIndex > -1) { // fix issue
-					Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
-					String name = parseSnitchName(msg);
-					n.name = name;
-					if (SVPlayerHandler.updateSnitchName) {
-						SVPlayerHandler.updateSnitchName = false; // done!
-					}
-					SVFileIOHandler.saveList();
+				try {
+					if (SVPlayerHandler.snitchIndex > -1) { // fix issue
+						Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
+						String name = parseSnitchName(msg);
+						n.name = name;
+						if (SVPlayerHandler.updateSnitchName) {
+							SVPlayerHandler.updateSnitchName = false; // done!
+						}
+						SVFileIOHandler.saveList();
 
-					if (snitchReport) {
-						if (snitchReportName.equals("")) {
-							snitchReportName = name;
+						if (snitchReport) {
+							if (snitchReportName.equals("")) {
+								snitchReportName = name;
+							}
+							if (!snitchReportName.equals(name)) {
+								snitchReport = false;
+								SVFileIOHandler.saveSnitchReport(snitchReportName);
+								snitchReportName = "";
+							}
 						}
-						if (!snitchReportName.equals(name)) {
-							snitchReport = false;
-							SVFileIOHandler.saveSnitchReport(snitchReportName);
-							snitchReportName = "";
-						}
+					}
+				} catch (Exception e) {
+					logger.error("Exception encountered while parsing snitch logs", e);
+					
+					try {
+						Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+								"non-fatal error while parsing snitch logs"));
+					} catch (Exception f) {
+						logger.error("Couldn't notify player of error", f);
 					}
 				}
 			} else if (msg.contains("Unknown command") || msg.contains(" is empty")) {
@@ -88,9 +99,19 @@ public class SVChatHandler {
 	}
 
 	public static void updateSnitchList() {
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/tps");
-		SVTickHandler.start = new Date();
-		updateSnitchList = true;
+		try {
+			Minecraft.getMinecraft().thePlayer.sendChatMessage("/tps");
+			SVTickHandler.start = new Date();
+			updateSnitchList = true;
+		} catch (Exception e) {
+			logger.error("Exception encountered while updating snitch list", e);
+			try {
+				Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+						"non-fatal error while updating snitch list"));
+			} catch (Exception f) {
+				logger.error("Couldn't notify player of error", f);
+			}
+		}
 	}
 
 	public void ParseTPS(String msg) {
@@ -101,31 +122,53 @@ public class SVChatHandler {
 			double b = 20.0;
 			double c = 20.0;
 			try {
+				for (int i=0; i<3; i++) // fix for TPS 20 -- *20.0 is rendered, yikes.
+					tokens[i] = tokens[1].replace('*', ' ');
 				a = Double.parseDouble(tokens[0]);
 				b = Double.parseDouble(tokens[1]);
 				c = Double.parseDouble(tokens[2]);
 			} catch (Exception e) {
-				// replace with something specific, but when TPS
-				// is 20, game instagibs here.
 				logger.error("Failed to parse TPS:" + e.getMessage());
 			}
-			if (a < b && a < c) {
-				SVTickHandler.waitTime = SVTickHandler.tickTimeout / a;
-			} else if (b < a && b < c) {
-				SVTickHandler.waitTime = SVTickHandler.tickTimeout / b;
-			} else {
-				SVTickHandler.waitTime = SVTickHandler.tickTimeout / c;
+			try {
+				if (a < b && a < c) {
+					SVTickHandler.waitTime = SVTickHandler.tickTimeout / a;
+				} else if (b < a && b < c) {
+					SVTickHandler.waitTime = SVTickHandler.tickTimeout / b;
+				} else {
+					SVTickHandler.waitTime = SVTickHandler.tickTimeout / c;
+				}
+			} catch (Exception e) {
+				logger.error("Exception encountered while parsing TPS", e);
+				try {
+					Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+							"non-fatal error while parsing TPS"));
+				} catch (Exception f) {
+					logger.error("Couldn't notify player of error", f);
+				}
+				SVTickHandler.waitTime = 4.0;
 			}
 		} else {
-			SVTickHandler.waitTime = 4;
+			SVTickHandler.waitTime = 4.0;
 		}
 
-		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Timeout between commands is "
-				+ Double.toString(SVTickHandler.waitTime) + " seconds."));
+		try {
+			Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Timeout between commands is "
+					+ Double.toString(SVTickHandler.waitTime) + " seconds."));
+		} catch (Exception e) {
+			logger.error("Exception encountered while alerting user of TPS update speed", e);
+			try {
+				Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+						"non-fatal error while alerting user of TPS update speed"));
+			} catch (Exception f) {
+				logger.error("Couldn't notify player of error", f);
+			}
+		}
+
 	}
 
 	public void parseSnitch(String msg) {
-		if (msg.contains("[")) {
+		if (msg != null && msg.contains("[")) {
 			msg = msg.substring(msg.indexOf("[") + 1);
 			logger.info("Parsing string [" + msg);
 			String[] tokens = msg.split("[ \\[\\]]+");
@@ -153,58 +196,97 @@ public class SVChatHandler {
 					logger.error("Failed to parse snitch from chat!");
 				} catch (NullPointerException e) {
 					logger.error("Failed to create snitch instance!");
+				} catch (Exception e) {
+					logger.error("Catchall for failures: ", e);
 				}
 			}
 		}
 	}
 
 	public void parseBlock(String msg) {
-		if (msg.contains(">")) {
-			msg = msg.substring(msg.indexOf(">") + 1);
-			logger.info("Parsing string " + msg);
-			String[] tokens = msg.split(" +|\\[|\\]");
-			Block.Action type = Block.Action.NOP;
-			if (tokens[2].equals("Used")) {
-				type = Block.Action.USED;
-			} else if (tokens[1].equals("Removed")) {
-				type = Block.Action.REMOVED;
-			} else if (tokens[1].equals("Placed")) {
-				type = Block.Action.PLACED;
-			}
-
+		if (msg != null && msg.contains(">")) {
 			try {
-				int x = Integer.parseInt(tokens[5]);
-				int y = Integer.parseInt(tokens[6]);
-				int z = Integer.parseInt(tokens[7]);
-
-				if (type != Block.Action.NOP) {
-					if (!snitchReport) {
-						SV.instance.blockList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
-					} else {
-						tempList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
-					}
+				msg = msg.substring(msg.indexOf(">") + 1);
+				logger.info("Parsing string " + msg);
+				String[] tokens = msg.split(" +|\\[|\\]");
+				Block.Action type = Block.Action.NOP;
+				if (tokens[2].equals("Used")) {
+					type = Block.Action.USED;
+				} else if (tokens[1].equals("Removed")) {
+					type = Block.Action.REMOVED;
+				} else if (tokens[1].equals("Placed")) {
+					type = Block.Action.PLACED;
+				} else if (tokens[1].equals("Exchanged")) {
+					type = Block.Action.EXCHANGE;
+				} else if (tokens[1].equals("Destroyed")) {
+					type = Block.Action.DESTROYED;
 				}
-			} catch (NumberFormatException e) {
-				logger.error("Failed to parse block from chat!");
-			} catch (NullPointerException e) {
-				logger.error("Failed to create block instance!");
+	
+				try {
+					int x = Integer.parseInt(tokens[5]);
+					int y = Integer.parseInt(tokens[6]);
+					int z = Integer.parseInt(tokens[7]);
+	
+					if (type != Block.Action.NOP) {
+						if (!snitchReport) {
+							SV.instance.blockList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
+						} else {
+							tempList.add(new Block(x, y, z, type, tokens[1], "BlockID: " + tokens[4]));
+						}
+					}
+				} catch (NumberFormatException e) {
+					logger.error("Failed to parse block from chat!");
+				} catch (NullPointerException e) {
+					logger.error("Failed to create block instance!");
+				}
+			} catch (Exception e) {
+				logger.error("Exception encountered while parsing snitch report", e);
+				try {
+					Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+							"non-fatal error while parsing snitch report"));
+				} catch (Exception f) {
+					logger.error("Couldn't notify player of error", f);
+				}
 			}
 		}
 	}
 
 	public void parseEntry(String msg) {
-		if (msg.contains(">")) {
-			msg = msg.substring(msg.indexOf(">") + 1);
-			logger.info("Parsing string " + msg);
-			String[] tokens = msg.split(" +");
-			if (tokens[2].equals("Entry")) {
-				tempList.add(new Block(0, 0, 0, Block.Action.ENTRY, tokens[1], tokens[3] + " " + tokens[4]));
+		if (msg != null && msg.contains(">")) {
+			try {
+				msg = msg.substring(msg.indexOf(">") + 1);
+				logger.info("Parsing string " + msg);
+				String[] tokens = msg.split(" +");
+				if (tokens[2].equals("Entry")) {
+					tempList.add(new Block(0, 0, 0, Block.Action.ENTRY, tokens[1], tokens[3] + " " + tokens[4]));
+				}
+			} catch (Exception e) {
+				logger.error("Exception encountered while parsing snitch entry", e);
+				try {
+					Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+							"non-fatal error while parsing snitch entry"));
+				} catch (Exception f) {
+					logger.error("Couldn't notify player of error", f);
+				}
 			}
 		}
 	}
 
 	public String parseSnitchName(String msg) {
-		String tokens[] = msg.split(" +|-+");
-		return tokens[tokens.length - 1];
+		try {
+			if (msg != null && msg.length() > 0) {
+				String tokens[] = msg.split(" +|-+");
+				return tokens[tokens.length - 1];
+			}
+		} catch (Exception e) {
+			logger.error("Exception encountered while parsing snitch name", e);
+			try {
+				Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Check logs; " +
+						"non-fatal error while parsing snitch name"));
+			} catch (Exception f) {
+				logger.error("Couldn't notify player of error", f);
+			}
+		}
+		return "Unknown";
 	}
 }

@@ -18,7 +18,7 @@ public class Block {
 	public String details;
 
 	public enum Action {
-		NOP, USED, REMOVED, PLACED, ENTRY;
+		NOP, USED, REMOVED, PLACED, ENTRY, EMPTY, LOGIN, LOGOUT, EXCHANGE, DESTROYED;
 	}
 
 	/**

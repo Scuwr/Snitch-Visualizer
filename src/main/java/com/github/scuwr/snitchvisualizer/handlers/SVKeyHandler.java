@@ -35,13 +35,21 @@ public class SVKeyHandler {
 	@SubscribeEvent
 	public void onKeyPress(InputEvent.KeyInputEvent event) {
 		if (keySVGui.isPressed()) {
-			Minecraft.getMinecraft().displayGuiScreen(new SVGui(null));
+			try {
+				Minecraft.getMinecraft().displayGuiScreen(new SVGui(null));
+			} catch (Exception e) {
+				logger.error("Unexpected error displaying SV gui", e);
+			}
 		}
 		if (keyRemoveSnitch.isPressed() && SV.settings.renderEnabled) {
-			logger.info("Delete Snitch Key Pressed!");
-			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-			SVPlayerHandler.checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
-					(int) Math.floor(player.posZ), SV.instance.snitchList, true);
+			try {
+				logger.info("Delete Snitch Key Pressed!");
+				EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+				SVPlayerHandler.checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+						(int) Math.floor(player.posZ), SV.instance.snitchList, true);
+			} catch (Exception e) {
+				logger.error("Unexpected error while deleting a snitch", e);
+			}
 		}
 	}
 

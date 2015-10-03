@@ -31,23 +31,31 @@ public class SVPlayerHandler {
 
 	@SubscribeEvent
 	public void onPlayerEvent(ClientTickEvent event) {
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		if (player != null) {
-			if (Math.floor(player.prevPosX) != Math.floor(player.posX)
-					|| Math.floor(player.prevPosY) != Math.floor(player.posY)
-					|| Math.floor(player.prevPosZ) != Math.floor(player.posZ)) {
-				player.prevPosX = player.posX;
-				player.prevPosY = player.posY;
-				player.prevPosZ = player.posZ;
-				onPlayerMove(player);
+		try {
+			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+			if (player != null) {
+				if (Math.floor(player.prevPosX) != Math.floor(player.posX)
+						|| Math.floor(player.prevPosY) != Math.floor(player.posY)
+						|| Math.floor(player.prevPosZ) != Math.floor(player.posZ)) {
+					player.prevPosX = player.posX;
+					player.prevPosY = player.posY;
+					player.prevPosZ = player.posZ;
+					onPlayerMove(player);
+				}
 			}
+		} catch (Exception e) {
+			logger.error("Unexpected error during client tick event handler for player movement.", e);
 		}
 	}
 
 	public void onPlayerMove(EntityPlayerSP player) {
-		if (SV.settings.updateDetection)
-			checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
-					(int) Math.floor(player.posZ), SV.instance.snitchList, false);
+		try {
+			if (SV.settings.updateDetection)
+				checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+						(int) Math.floor(player.posZ), SV.instance.snitchList, false);
+		} catch (Exception e) {
+			logger.error("Unexpected error during player move handling", e);
+		}
 	}
 
 	/**
@@ -71,47 +79,50 @@ public class SVPlayerHandler {
 	 *            flag
 	 */
 	public static void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch) {
-		int min = findLowerXLimit(x, 0, snitchList.size() - 1, snitchList);
-		int max = findUpperXLimit(x, min, snitchList.size() - 1, snitchList);
-
-		int index = -1;
-		double sqDistance = Double.MAX_VALUE;
-
-		for (int i = min; i < max; i++) {
-			Snitch n = snitchList.get(i);
-			if (x >= n.fieldMinX && x <= n.fieldMaxX && z >= n.fieldMinZ && z <= n.fieldMaxZ && y >= n.fieldMinY
-					&& y <= n.fieldMaxY) {
-				// Get closest snitch
-				double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.x, n.y, n.z);
-				if (temp < sqDistance) {
-					sqDistance = temp;
-					index = i;
+		try {
+			int min = findLowerXLimit(x, 0, snitchList.size() - 1, snitchList);
+			int max = findUpperXLimit(x, min, snitchList.size() - 1, snitchList);
+	
+			int index = -1;
+			double sqDistance = Double.MAX_VALUE;
+	
+			for (int i = min; i < max; i++) {
+				Snitch n = snitchList.get(i);
+				if (x >= n.fieldMinX && x <= n.fieldMaxX && z >= n.fieldMinZ && z <= n.fieldMaxZ && y >= n.fieldMinY
+						&& y <= n.fieldMaxY) {
+					// Get closest snitch
+					double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.x, n.y, n.z);
+					if (temp < sqDistance) {
+						sqDistance = temp;
+						index = i;
+					}
 				}
 			}
-		}
-
-		if (index != -1) {
-			snitchIndex = index;
-			Snitch n = SV.instance.snitchList.get(index);
-			n.cullTime = Snitch.changeToDate(672.0);
-			playerIsInSnitchArea = true;
-			updateSnitchName = false;
-			if (removeSnitch) {
-				SV.instance.snitchList.remove(index);
-				logger.info("Snitch Removed!");
-				Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("[" + SV.MODNAME
-						+ "] You have just deleted a Snitch!"));
-			} else if (n.name.equals("Unknown")) {
-				updateSnitchName = true;
+	
+			if (index != -1) {
+				snitchIndex = index;
+				Snitch n = SV.instance.snitchList.get(index);
+				n.cullTime = Snitch.changeToDate(672.0);
+				playerIsInSnitchArea = true;
+				updateSnitchName = false;
+				if (removeSnitch) {
+					SV.instance.snitchList.remove(index);
+					logger.info("Snitch Removed!");
+					Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("[" + SV.MODNAME
+							+ "] You have just deleted a Snitch!"));
+				} else if (n.name.equals("Unknown")) {
+					updateSnitchName = true;
+				}
+			} else if (playerIsInSnitchArea) {
+				playerIsInSnitchArea = false;
+				updateSnitchName = false;
+				snitchIndex = -1;
+				SVFileIOHandler.saveList();
 			}
-		} else if (playerIsInSnitchArea) {
-			playerIsInSnitchArea = false;
-			updateSnitchName = false;
-			snitchIndex = -1;
-			SVFileIOHandler.saveList();
+		} catch (Exception e) {
+			logger.error("Failure while checking snitch area!", e);
 		}
 	}
-
 	/*
 	 * New strategy:
 	 * 
@@ -155,8 +166,4 @@ public class SVPlayerHandler {
 		return mid;
 	}
 
-	public static Snitch getSnitch() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

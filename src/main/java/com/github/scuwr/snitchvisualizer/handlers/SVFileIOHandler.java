@@ -63,7 +63,9 @@ public class SVFileIOHandler {
 			}
 			bw.close();
 		} catch (IOException e) {
-			logger.error("Failed to write to SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to write to SnitchList.csv!", e);
+		} catch (Exception f) {
+			logger.error("General failure while writing SnitchList.csv", f);
 		}
 		isDone = true;
 	}
@@ -89,7 +91,9 @@ public class SVFileIOHandler {
 
 			bw.close();
 		} catch (IOException e) {
-			logger.error("Failed to write to SVSettings.txt!\n" + e.getMessage());
+			logger.error("Failed to write to SVSettings.txt!", e);
+		} catch (Exception f) {
+			logger.error("Failure while writing to SVSettings.txt", f);
 		}
 		isDone = true;
 	}
@@ -124,11 +128,13 @@ public class SVFileIOHandler {
 				saveList();
 			}
 		} catch (IOException e) {
-			logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to load SnitchList.csv!", e);
 		} catch (NullPointerException e) {
-			logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
+			logger.error("SnitchList.csv does not exist!", e);
 		} catch (NumberFormatException e) {
-			logger.error("Could not parse integer from list!\n" + e.getMessage());
+			logger.error("Could not parse integer from list!", e);
+		} catch (Exception e) {
+			logger.error("Failure while parsing SnitchList.csv", e);
 		}
 		isDone = true;
 	}
@@ -178,9 +184,11 @@ public class SVFileIOHandler {
 			}
 			br.close();
 		} catch (IOException e) {
-			logger.error("Failed to load SnitchList.csv!\n" + e.getMessage());
+			logger.error("Failed to load SnitchList.csv!", e);
 		} catch (NullPointerException e) {
-			logger.error("SnitchList.csv does not exist!\n" + e.getMessage());
+			logger.error("SnitchList.csv does not exist!", e);
+		} catch (Exception e) {
+			logger.error("Failure while loading SnitchList.csv", e);
 		}
 		isDone = true;
 	}
@@ -192,52 +200,61 @@ public class SVFileIOHandler {
 
 	public static void saveSnitchReport(String snitchName) {
 		isDone = false;
-		if (!snitchName.equals("")) {
-			try {
-				if (!svDir.exists()) {
-					logger.info("Creating Snitch Visualizer Directory");
-					if (!svDir.mkdirs()) {
-						logger.error("Failed to create Snitch Visualizer Directory!");
+		try {
+			if (!snitchName.equals("")) {
+				try {
+					if (!svDir.exists()) {
+						logger.info("Creating Snitch Visualizer Directory");
+						if (!svDir.mkdirs()) {
+							logger.error("Failed to create Snitch Visualizer Directory!");
+						}
 					}
-				}
-				if (!reportDir.exists()) {
-					logger.info("Creating Snitch Report Directory");
-					reportDir.createNewFile();
-				}
-				File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport
-						+ "/" + snitchName + ".csv");
-				snitchReport.createNewFile();
-
-				BufferedWriter bw = new BufferedWriter(new FileWriter(snitchReport));
-				logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
-				for (Block b : SVChatHandler.tempList) {
-					String type = "";
-					switch (b.type) {
-					case USED:
-						type = "Used";
-						break;
-					case REMOVED:
-						type = "Removed";
-						break;
-					case PLACED:
-						type = "Placed";
-						break;
-					case ENTRY:
-						type = "Entry";
-						break;
-					case NOP:
-						type = "Unrecognized";
-						break;
-					default:
-						break;
+					if (!reportDir.exists()) {
+						logger.info("Creating Snitch Report Directory");
+						reportDir.createNewFile();
 					}
-					bw.write(b.playerName + "," + type + "," + b.details + "," + b.x + "," + b.y + "," + b.z + ","
-							+ "\r\n");
+					File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport
+							+ "/" + snitchName + ".csv");
+					snitchReport.createNewFile();
+	
+					BufferedWriter bw = new BufferedWriter(new FileWriter(snitchReport));
+					logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
+					for (Block b : SVChatHandler.tempList) {
+						String type = "";
+						switch (b.type) {
+						case USED:
+							type = "Used";
+							break;
+						case REMOVED:
+							type = "Removed";
+							break;
+						case PLACED:
+							type = "Placed";
+							break;
+						case ENTRY:
+							type = "Entry";
+							break;
+						case EXCHANGE:
+							type = "Exchanged";
+							break;
+						case DESTROYED:
+							type = "Destroyed";
+						case NOP:
+							type = "Unrecognized";
+							break;
+						default:
+							break;
+						}
+						bw.write(b.playerName + "," + type + "," + b.details + "," + b.x + "," + b.y + "," + b.z + ","
+								+ "\r\n");
+					}
+					bw.close();
+				} catch (IOException e) {
+					logger.error("Failed to write to Snitch Report!", e);
 				}
-				bw.close();
-			} catch (IOException e) {
-				logger.error("Failed to write to Snitch Report!\n" + e.getMessage());
 			}
+		} catch (Exception e) {
+			logger.error("General error while writing to Snitch Report", e);
 		}
 		isDone = true;
 	}

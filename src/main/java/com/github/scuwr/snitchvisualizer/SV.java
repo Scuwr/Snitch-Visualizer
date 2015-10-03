@@ -45,6 +45,7 @@ public class SV {
 	public ArrayList<Block> blockList;
 	public static SVSettings settings;
 	public static Logger logger = LogManager.getLogger("SnitchVisualizer");
+	public SVPlayerHandler playerHandler;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -67,7 +68,8 @@ public class SV {
 		FMLCommonHandler.instance().bus().register(new SVKeyHandler());
 		MinecraftForge.EVENT_BUS.register(new SVRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SVChatHandler());
-		MinecraftForge.EVENT_BUS.register(new SVPlayerHandler());
+		playerHandler = new SVPlayerHandler();
+		MinecraftForge.EVENT_BUS.register(playerHandler);
 		FMLCommonHandler.instance().bus().register(new SVTickHandler());
 	}
 

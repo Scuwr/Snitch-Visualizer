@@ -2,6 +2,11 @@ package com.github.scuwr.snitchvisualizer.handlers;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.github.scuwr.snitchvisualizer.SV;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -22,6 +27,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
  */
 public class SVTickHandler {
 
+	public static Logger logger = LogManager.getLogger("SnitchVisualizer");
+	
 	public int playerTicks = 0;
 	public static double waitTime = 4;
 	public static int tickTimeout = 20;
@@ -29,24 +36,31 @@ public class SVTickHandler {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
-		new SVPlayerHandler().onPlayerEvent(event);
-		if (((new Date()).getTime() - (waitTime * 1000)) > start.getTime()) {
-			if (SVChatHandler.updateSnitchList) {
-				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
-				SVChatHandler.jalistIndex++;
-				start = new Date();
-			}
-			if (SVPlayerHandler.updateSnitchName || SVChatHandler.snitchReport) {
-				Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo " + SVChatHandler.jainfoIndex);
-				if (SVChatHandler.snitchReport) {
-					SVChatHandler.jainfoIndex++;
+		try {
+			//TODO double check, seems a memory leak here but might have been intentional,
+			// if so rip it out and redesign as it was horrible.
+			if (SV.instance.playerHandler != null)
+				SV.instance.playerHandler.onPlayerEvent(event);
+			
+			if (((new Date()).getTime() - (waitTime * 1000)) > start.getTime()) {
+				if (SVChatHandler.updateSnitchList) {
+					Minecraft.getMinecraft().thePlayer.sendChatMessage("/jalist " + SVChatHandler.jalistIndex);
+					SVChatHandler.jalistIndex++;
+					start = new Date();
 				}
-				start = new Date();
-				if (SVPlayerHandler.updateSnitchName) { // Do this once then stop.
-					SVPlayerHandler.updateSnitchName = false;
+				if (SVPlayerHandler.updateSnitchName || SVChatHandler.snitchReport) {
+					Minecraft.getMinecraft().thePlayer.sendChatMessage("/jainfo " + SVChatHandler.jainfoIndex);
+					if (SVChatHandler.snitchReport) {
+						SVChatHandler.jainfoIndex++;
+					}
+					start = new Date();
+					if (SVPlayerHandler.updateSnitchName) { // Do this once then stop.
+						SVPlayerHandler.updateSnitchName = false;
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error("Something went wrong during tick handling", e);
 		}
-
 	}
 }

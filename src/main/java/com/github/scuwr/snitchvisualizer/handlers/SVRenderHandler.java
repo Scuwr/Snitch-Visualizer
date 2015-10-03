@@ -218,6 +218,8 @@ public class SVRenderHandler {
 				}
 			} catch (NullPointerException e) {
 				logger.error("An exception has been thrown!", e);
+			} catch (Exception e) {
+				logger.error("Unexpected exception while rendering snitch in world", e);
 			}
 		}
 	}
