@@ -3,6 +3,8 @@ package com.github.scuwr.snitchvisualizer.handlers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,7 @@ public class SVChatHandler {
 	public static ArrayList<Block> tempList;
 
 	private static Logger logger = LogManager.getLogger("SnitchVisualizer");
+	private static Pattern snitchMessage = Pattern.compile("\\s*([^\\s]*?)\\s*\\[([-\\d]*)\\s([-\\d]*)\\s([-\\d]*)\\]\\s*(\\d*.\\d\\d)?\\s*([^\\s]*)");
 
 	@SubscribeEvent
 	public void onChat(ClientChatReceivedEvent event) {
@@ -40,8 +43,11 @@ public class SVChatHandler {
 			if (msg == null) {
 				return;
 			}
-			if (!msg.contains("*") && msg.contains("world")) {
-				parseSnitch(msg);
+			if (!msg.contains("*")) {
+				Matcher isSM = SVChatHandler.snitchMessage.matcher(msg);
+				if (isSM.matches()) {
+					parseSnitch(msg, isSM);
+				}
 			} else if (msg.contains("*") && msg.contains("snitch at")) {
 				// parseSnitch(msg)
 			} else if (msg.contains("Used") || msg.contains("Block Break") || msg.contains("Block Place")) {
@@ -167,39 +173,45 @@ public class SVChatHandler {
 
 	}
 
-	public void parseSnitch(String msg) {
-		if (msg != null && msg.contains("[")) {
-			msg = msg.substring(msg.indexOf("[") + 1);
-			logger.info("Parsing string [" + msg);
-			String[] tokens = msg.split("[ \\[\\]]+");
-			if (tokens.length == 5) {
-				try {
-					int x = Integer.parseInt(tokens[0]);
-					int y = Integer.parseInt(tokens[1]);
-					int z = Integer.parseInt(tokens[2]);
-					double cullTime = Double.parseDouble(tokens[3]);
-					String ctGroup = tokens[4];
-
-					Snitch n = new Snitch(x, y, z, cullTime, ctGroup, null);
-
-					int index = Collections.binarySearch(SV.instance.snitchList, n);
-					if (index < 0 || 0 != n.compareTo(SV.instance.snitchList.get(index))) {
-						SV.instance.snitchList.add(n);
-						Collections.sort(SV.instance.snitchList);
-						SVFileIOHandler.saveList();
-					} else {
-						SV.instance.snitchList.get(index).ctGroup = ctGroup;
-						SV.instance.snitchList.get(index).cullTime = Snitch.changeToDate(cullTime);
-						SVFileIOHandler.saveList();
-					}
-				} catch (NumberFormatException e) {
-					logger.error("Failed to parse snitch from chat!");
-				} catch (NullPointerException e) {
-					logger.error("Failed to create snitch instance!");
-				} catch (Exception e) {
-					logger.error("Catchall for failures: ", e);
-				}
+	public void parseSnitch(String msg, Matcher match) {
+		if (msg == null) return;
+		if (match == null) {
+			match = SVChatHandler.snitchMessage.matcher(msg);
+			if (!match.matches()) return;
+		}
+		logger.info("Parsing string | " + msg);
+		try {
+			String world = match.group(1);
+			int x = Integer.parseInt(match.group(2));
+			int y = Integer.parseInt(match.group(3));
+			int z = Integer.parseInt(match.group(4));
+			double cullTime = -1.0d;
+			if (match.group(5) != null) {
+				cullTime = Double.parseDouble(match.group(5));
 			}
+			String ctGroup = match.group(6);
+
+			// TODO: add world.
+
+			Snitch n = new Snitch(world, x, y, z, cullTime, ctGroup, null);
+
+			// TODO: just use a sorted collection, this is gross.
+			int index = Collections.binarySearch(SV.instance.snitchList, n);
+			if (index < 0 || 0 != n.compareTo(SV.instance.snitchList.get(index))) {
+				SV.instance.snitchList.add(n);
+				Collections.sort(SV.instance.snitchList);
+				SVFileIOHandler.saveList();
+			} else {
+				SV.instance.snitchList.get(index).ctGroup = ctGroup;
+				SV.instance.snitchList.get(index).setCullTime(cullTime);
+				SVFileIOHandler.saveList();
+			}
+		} catch (NumberFormatException e) {
+			logger.error("Failed to parse snitch from chat!");
+		} catch (NullPointerException e) {
+			logger.error("Failed to create snitch instance!");
+		} catch (Exception e) {
+			logger.error("Catchall for failures: ", e);
 		}
 	}
 
