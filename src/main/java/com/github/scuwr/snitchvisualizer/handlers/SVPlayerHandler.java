@@ -28,10 +28,17 @@ public class SVPlayerHandler {
 	public static boolean updateSnitchName = false;
 
 	private static boolean playerIsInSnitchArea = false;
+	
+	private long lastExecute = 0l;
+	private static long delay = 50l;
 
 	@SubscribeEvent
 	public void onPlayerEvent(ClientTickEvent event) {
+		if (!SV.settings.updateDetection) return;
+		if (lastExecute != 0l && ((System.currentTimeMillis() - lastExecute) < SVPlayerHandler.delay)) return; 
 		try {
+			logger.info("Captured player event");
+			lastExecute = System.currentTimeMillis();
 			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 			if (player != null) {
 				if (Math.floor(player.prevPosX) != Math.floor(player.posX)
@@ -50,9 +57,9 @@ public class SVPlayerHandler {
 
 	public void onPlayerMove(EntityPlayerSP player) {
 		try {
-			if (SV.settings.updateDetection)
-				checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
-						(int) Math.floor(player.posZ), SV.instance.snitchList, false);
+			logger.info("Current world: " + player.worldObj.getProviderName());
+			checkSnitchArea(player.worldObj.getProviderName(), (int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+					(int) Math.floor(player.posZ), SV.instance.snitchList, false);
 		} catch (Exception e) {
 			logger.error("Unexpected error during player move handling", e);
 		}
@@ -78,20 +85,30 @@ public class SVPlayerHandler {
 	 * @param removeSnitch
 	 *            flag
 	 */
-	public static void checkSnitchArea(int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch) {
+	public static long searchChecks = 0l;
+	public static void checkSnitchArea(String world, int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch) {
 		try {
-			int min = findLowerXLimit(x, 0, snitchList.size() - 1, snitchList);
-			int max = findUpperXLimit(x, min, snitchList.size() - 1, snitchList);
+			searchChecks = 0l;
+			int min = findLowerWorldLimit(world, 0, snitchList.size() - 1, snitchList);
+			int max = findUpperWorldLimit(world, min, snitchList.size() - 1, snitchList);
+			min = findLowerXLimit(x, min, max, snitchList);
+			max = findUpperXLimit(x, min, max, snitchList);
+			min = findLowerYLimit(x, min, max, snitchList);
+			max = findUpperYLimit(x, min, max, snitchList);
+			
+			logger.info("Performed " + searchChecks + " checks -- final bounds: " + min + ", " + max);
+			logger.info("Total snitches: " + snitchList.size() + " -- searched " +
+						Math.round(((double)(searchChecks + max-min+1) / (double)snitchList.size()) * 10000.0d)/100.0d + "% of total");
 	
 			int index = -1;
 			double sqDistance = Double.MAX_VALUE;
 	
-			for (int i = min; i < max; i++) {
+			for (int i = min; i <= max; i++) {
 				Snitch n = snitchList.get(i);
-				if (x >= n.fieldMinX && x <= n.fieldMaxX && z >= n.fieldMinZ && z <= n.fieldMaxZ && y >= n.fieldMinY
-						&& y <= n.fieldMaxY) {
+				if (x >= n.getFieldMinX() && x <= n.getFieldMaxX() && z >= n.getFieldMinZ() && z <= n.getFieldMaxZ() && 
+						y >= n.getFieldMinY() && y <= n.getFieldMaxY()) {
 					// Get closest snitch
-					double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.x, n.y, n.z);
+					double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.getX(), n.getY(), n.getZ());
 					if (temp < sqDistance) {
 						sqDistance = temp;
 						index = i;
@@ -102,7 +119,7 @@ public class SVPlayerHandler {
 			if (index != -1) {
 				snitchIndex = index;
 				Snitch n = SV.instance.snitchList.get(index);
-				n.cullTime = Snitch.changeToDate(672.0);
+				n.setRawCullTime(Snitch.changeToDate(672.0));
 				playerIsInSnitchArea = true;
 				updateSnitchName = false;
 				if (removeSnitch) {
@@ -110,7 +127,7 @@ public class SVPlayerHandler {
 					logger.info("Snitch Removed!");
 					Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("[" + SV.MODNAME
 							+ "] You have just deleted a Snitch!"));
-				} else if (n.name.equals("Unknown")) {
+				} else if (n.getName().equals("Unknown")) {
 					updateSnitchName = true;
 				}
 			} else if (playerIsInSnitchArea) {
@@ -132,6 +149,57 @@ public class SVPlayerHandler {
 	 * maybe use a map?
 	 */
 
+	private static int findUpperYLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) {
+			return max;
+		}
+		Snitch n = snitchList.get(mid);
+
+		searchChecks++;
+		if (i > n.getFieldMinY()) {
+			return findUpperYLimit(i, mid, max, snitchList);
+		}
+		searchChecks++;
+		if (i < n.getFieldMinY()) {
+			return findUpperYLimit(i, min, mid, snitchList);
+		}
+		int nmid = mid ++;
+		while (i == snitchList.get(nmid).getFieldMinY()) {
+			searchChecks++;
+			nmid ++;
+		}
+		searchChecks++;
+		mid = nmid --;
+
+		return mid;
+	}
+
+	private static int findLowerYLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) {
+			return min;
+		}
+		Snitch n = snitchList.get(mid);
+
+		searchChecks++;
+		if (i > n.getFieldMaxY()) {
+			return findLowerYLimit(i, mid, max, snitchList);
+		}
+		searchChecks++;
+		if (i < n.getFieldMaxY()) {
+			return findLowerYLimit(i, min, mid, snitchList);
+		}
+		int nmid = mid --;
+		while (i == snitchList.get(nmid).getFieldMaxY()) {
+			searchChecks++;
+			nmid --;
+		}
+		searchChecks++;
+		mid = nmid ++;
+		return mid;
+	}
+
 	private static int findUpperXLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
 		int mid = min + ((max - min) / 2);
 		if (max - min <= 1) {
@@ -139,12 +207,22 @@ public class SVPlayerHandler {
 		}
 		Snitch n = snitchList.get(mid);
 
-		if (i > n.fieldMinX) {
+		searchChecks++;
+		if (i > n.getFieldMinX()) {
 			return findUpperXLimit(i, mid, max, snitchList);
 		}
-		if (i < n.fieldMinX) {
+		
+		searchChecks++;
+		if (i < n.getFieldMinX()) {
 			return findUpperXLimit(i, min, mid, snitchList);
 		}
+		int nmid = mid ++;
+		while (i == snitchList.get(nmid).getFieldMinX()) {
+			searchChecks++;
+			nmid ++;
+		}
+		searchChecks++;
+		mid = nmid --;
 
 		return mid;
 	}
@@ -156,14 +234,76 @@ public class SVPlayerHandler {
 		}
 		Snitch n = snitchList.get(mid);
 
-		if (i > n.fieldMaxX) {
+		searchChecks++;
+		if (i > n.getFieldMaxX()) {
 			return findLowerXLimit(i, mid, max, snitchList);
 		}
-		if (i < n.fieldMaxX) {
+		searchChecks++;
+		if (i < n.getFieldMaxX()) {
 			return findLowerXLimit(i, min, mid, snitchList);
 		}
+		int nmid = mid --;
+		while (i == snitchList.get(nmid).getFieldMaxX()) {
+			searchChecks++;
+			nmid --;
+		}
+		searchChecks++;
+		mid = nmid ++;
+		return mid;
+	}
+
+	
+	private static int findUpperWorldLimit(String world, int min, int max, ArrayList<Snitch> snitchList) {
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) {
+			return max;
+		}
+		Snitch n = snitchList.get(mid);
+		
+		searchChecks++;
+		if (world.compareTo(n.getWorld()) > 0) {
+			return findUpperWorldLimit(world, mid, max, snitchList);
+		}
+		searchChecks++;
+		if (world.compareTo(n.getWorld()) < 0) {
+			return findUpperWorldLimit(world, min, mid, snitchList);
+		}
+		int nmid = mid ++;
+		while (world.compareTo(snitchList.get(nmid).getWorld()) == 0) {
+			searchChecks++;
+			nmid ++;
+		}
+		searchChecks++;
+		mid = nmid --;
 
 		return mid;
 	}
 
+	private static int findLowerWorldLimit(String world, int min, int max, ArrayList<Snitch> snitchList) {
+		int mid = min + ((max - min) / 2);
+		if (max - min <= 1) {
+			return min;
+		}
+		Snitch n = snitchList.get(mid);
+
+		searchChecks++;
+		if (world.compareTo(n.getWorld()) > 0) {
+			return findLowerWorldLimit(world, mid, max, snitchList);
+		}
+		searchChecks++;
+		if (world.compareTo(n.getWorld()) < 0) {
+			return findLowerWorldLimit(world, min, mid, snitchList);
+		}
+		int nmid = mid --;
+		while (world.compareTo(snitchList.get(nmid).getWorld()) == 0) {
+			searchChecks++;
+			nmid --;
+		}
+		searchChecks++;
+		mid = nmid ++;
+
+		return mid;
+	}
+
+	
 }

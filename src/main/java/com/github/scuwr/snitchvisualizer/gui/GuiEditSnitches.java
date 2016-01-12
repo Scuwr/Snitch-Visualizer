@@ -18,9 +18,7 @@ import com.github.scuwr.snitchvisualizer.handlers.SVFileIOHandler;
  * Defines the on-screen gui for editing the snitch list
  * 
  * @author Scuwr
- *
  */
-
 @SideOnly(Side.CLIENT)
 public class GuiEditSnitches extends GuiScreen {
 

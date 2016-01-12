@@ -33,7 +33,7 @@ public class SV {
 
 	public static final String MODID = "scuwrsnitchvisualizer";
 	public static final String MODNAME = "Snitch Visualizer";
-	public static final String MODVERSION = "1.1.4";
+	public static final String MODVERSION = "1.1.6";
 
 	@Instance("SV")
 	public static SV instance;
@@ -69,7 +69,7 @@ public class SV {
 		MinecraftForge.EVENT_BUS.register(new SVRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SVChatHandler());
 		playerHandler = new SVPlayerHandler();
-		MinecraftForge.EVENT_BUS.register(playerHandler);
+		FMLCommonHandler.instance().bus().register(playerHandler);
 		FMLCommonHandler.instance().bus().register(new SVTickHandler());
 	}
 

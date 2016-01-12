@@ -55,9 +55,9 @@ public class SVRenderHandler {
 						GL11.glDepthMask(false);
 
 						GL11.glPushMatrix();
-						double px = -(renderPosX - n.x);
-						double py = -(renderPosY - n.y);
-						double pz = -(renderPosZ - n.z);
+						double px = -(renderPosX - n.getX());
+						double py = -(renderPosY - n.getY());
+						double pz = -(renderPosZ - n.getZ());
 						AxisAlignedBB bb = AxisAlignedBB.fromBounds(px - 10.99, py - 11.99, pz - 10.99, px + 11.99,
 								py + 10.99, pz + 11.99);
 
@@ -114,9 +114,9 @@ public class SVRenderHandler {
 						GL11.glDepthMask(false);
 
 						GL11.glPushMatrix();
-						px = -(renderPosX - n.x);
-						py = -(renderPosY - n.y);
-						pz = -(renderPosZ - n.z);
+						px = -(renderPosX - n.getX());
+						py = -(renderPosY - n.getY());
+						pz = -(renderPosZ - n.getZ());
 						bb = AxisAlignedBB.fromBounds(px - 0.01, py - 0.01, pz - 0.01, px + 0.99, py + 0.99, pz + 0.99);
 
 						switch (color) {
@@ -161,7 +161,7 @@ public class SVRenderHandler {
 					}
 				}
 				for (Block b : SV.instance.blockList) {
-					if (b.getDistance() < SV.settings.renderDistance * 16 && !(b.x == 0 && b.y == 0 && b.z == 0)) {
+					if (b.getDistance() < SV.settings.renderDistance * 16 && !(b.getX() == 0 && b.getY() == 0 && b.getZ() == 0)) {
 						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 						GL11.glLineWidth(5F);
 						GL11.glDisable(GL11.GL_LIGHTING);
@@ -174,13 +174,13 @@ public class SVRenderHandler {
 						GL11.glDepthMask(false);
 
 						GL11.glPushMatrix();
-						double px = -(renderPosX - b.x);
-						double py = -(renderPosY - b.y);
-						double pz = -(renderPosZ - b.z);
+						double px = -(renderPosX - b.getX());
+						double py = -(renderPosY - b.getY());
+						double pz = -(renderPosZ - b.getZ());
 						AxisAlignedBB bb = AxisAlignedBB.fromBounds(px - 0.01, py - 0.01, pz - 0.01, px + 0.99,
 								py + 0.99, pz + 0.99);
 
-						switch (b.type) {
+						switch (b.getType()) {
 						case USED:
 							GL11.glColor4d(0.55, 0.98, 0.81, 0.25);
 							break;
@@ -192,7 +192,7 @@ public class SVRenderHandler {
 							break;
 						}
 						drawCrossedOutlinedBoundingBox(bb);
-						switch (b.type) {
+						switch (b.getType()) {
 						case USED:
 							GL11.glColor4d(0.55, 0.98, 0.81, 0.25);
 							break;
@@ -324,6 +324,7 @@ public class SVRenderHandler {
 		tess.draw();
 	}
 
+	// TODO: configurable
 	public int getColor(Double time) {
 		if (time < 0) {
 			return 3;

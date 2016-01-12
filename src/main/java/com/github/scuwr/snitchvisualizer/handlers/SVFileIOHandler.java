@@ -58,8 +58,9 @@ public class SVFileIOHandler {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
 			logger.info("Saving Snitch list.. " + SV.instance.snitchList.size() + " snitches to save.");
 			for (Snitch n : SV.instance.snitchList) {
-				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.name
-						+ "," + "\r\n");
+				bw.write(n.getWorld() + "," + n.getX() + "," + n.getY() + "," + n.getZ() + "," + 
+							((n.getRawCullTime() != null) ? n.getRawCullTime().getTime() : " ") + "," +
+							n.getCtGroup() + "," + n.getName() + "," + "\r\n");
 			}
 			bw.close();
 		} catch (IOException e) {
@@ -115,9 +116,16 @@ public class SVFileIOHandler {
 			String line = br.readLine();
 			while (line != null) {
 				String tokens[] = line.split(",|;");
-				if (tokens.length > 5) {
+				if (tokens.length > 6) { // new
+					double cullTime = (!tokens[4].trim().equals("")) ? hoursToDate(Long.parseLong(tokens[4])) : -1;
+					SV.instance.snitchList.add(new Snitch(tokens[0], Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]),
+							Integer.parseInt(tokens[3]), cullTime, tokens[5], tokens[6]));
+				} else if (tokens.length > 5) { //old
+					double cullTime = (!tokens[3].trim().equals("")) ? hoursToDate(Long.parseLong(tokens[3])) : -1;
 					SV.instance.snitchList.add(new Snitch(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]),
-							Integer.parseInt(tokens[2]), hoursToDate(Long.parseLong(tokens[3])), tokens[4], tokens[5]));
+							Integer.parseInt(tokens[2]), cullTime, tokens[4], tokens[5]));
+				} else {
+					logger.info("Snitch line failed to import: " + line);
 				}
 				line = br.readLine();
 			}
@@ -221,7 +229,7 @@ public class SVFileIOHandler {
 					logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
 					for (Block b : SVChatHandler.tempList) {
 						String type = "";
-						switch (b.type) {
+						switch (b.getType()) {
 						case USED:
 							type = "Used";
 							break;
@@ -245,7 +253,7 @@ public class SVFileIOHandler {
 						default:
 							break;
 						}
-						bw.write(b.playerName + "," + type + "," + b.details + "," + b.x + "," + b.y + "," + b.z + ","
+						bw.write(b.getPlayerName() + "," + type + "," + b.getDetails() + "," + b.getX() + "," + b.getY() + "," + b.getZ() + ","
 								+ "\r\n");
 					}
 					bw.close();

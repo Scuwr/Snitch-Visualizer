@@ -34,7 +34,7 @@ public class SVChatHandler {
 	public static ArrayList<Block> tempList;
 
 	private static Logger logger = LogManager.getLogger("SnitchVisualizer");
-	private static Pattern snitchMessage = Pattern.compile("\\s*([^\\s]*?)\\s*\\[([-\\d]*)\\s([-\\d]*)\\s([-\\d]*)\\]\\s*(\\d*.\\d\\d)?\\s*([^\\s]*)");
+	private static Pattern snitchMessage = Pattern.compile("\\s*([^\\s]*?)\\s*\\[([-\\d]*)\\s([-\\d]*)\\s([-\\d]*)\\]\\s*(\\d*.\\d\\d)?\\s*([^\\s]*)\\s*");
 
 	@SubscribeEvent
 	public void onChat(ClientChatReceivedEvent event) {
@@ -62,7 +62,7 @@ public class SVChatHandler {
 					if (SVPlayerHandler.snitchIndex > -1) { // fix issue
 						Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
 						String name = parseSnitchName(msg);
-						n.name = name;
+						n.setName(name);
 						if (SVPlayerHandler.updateSnitchName) {
 							SVPlayerHandler.updateSnitchName = false; // done!
 						}
@@ -191,8 +191,6 @@ public class SVChatHandler {
 			}
 			String ctGroup = match.group(6);
 
-			// TODO: add world.
-
 			Snitch n = new Snitch(world, x, y, z, cullTime, ctGroup, null);
 
 			// TODO: just use a sorted collection, this is gross.
@@ -202,7 +200,7 @@ public class SVChatHandler {
 				Collections.sort(SV.instance.snitchList);
 				SVFileIOHandler.saveList();
 			} else {
-				SV.instance.snitchList.get(index).ctGroup = ctGroup;
+				SV.instance.snitchList.get(index).setCtGroup(ctGroup);
 				SV.instance.snitchList.get(index).setCullTime(cullTime);
 				SVFileIOHandler.saveList();
 			}
