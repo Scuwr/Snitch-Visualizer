@@ -130,6 +130,11 @@ public class Snitch implements Comparable<Snitch> {
 		}
 		return 0;
 	}
+	
+	public boolean contains(String world, int x, int y, int z) {
+		return world.equals(getWorld()) && x >= getFieldMinX() && x <= getFieldMaxX() && z >= getFieldMinZ() && z <= getFieldMaxZ() && 
+				y >= getFieldMinY() && y <= getFieldMaxY();
+	}
 
 	/**
 	 * Gets the distance from the player to the Snitch object

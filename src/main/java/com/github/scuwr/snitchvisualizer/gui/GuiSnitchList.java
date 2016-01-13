@@ -96,7 +96,7 @@ public class GuiSnitchList extends GuiListExtended {
 	protected int getScrollBarX() {
 		return this.width - 16;
 	}
-
+	
 	/**
 	 * Gets the width of the list
 	 */
@@ -185,7 +185,7 @@ public class GuiSnitchList extends GuiListExtended {
 			this.xCoord = Integer.toString(snitch.getX());
 			this.yCoord = Integer.toString(snitch.getY());
 			this.zCoord = Integer.toString(snitch.getZ());
-			this.btnRemove = new GuiButton(0, GuiSnitchList.this.width - 60, 0, 50, 18, I18n.format("Remove", new Object[0]));
+			this.btnRemove = new GuiButton(10, GuiSnitchList.this.width - 60, 0, 50, 18, I18n.format("Remove", new Object[0]));
 
 			this.nameWidth = mc.fontRendererObj.getStringWidth(snitch.getName());
 			/*if (this.nameWidth > GuiSnitchList.this.nameSpace) {
@@ -251,11 +251,8 @@ public class GuiSnitchList extends GuiListExtended {
 		 * Returns true if the mouse has been pressed on this control.
 		 */
 		public boolean mousePressed(int index, int xPos, int yPos, int mouseEvent, int relX, int relY) {
-			if (this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos)) {
-				if (SV.instance.snitchList.remove(this.snitch)) {
-					this.btnRemove.displayString = "Removed!";
-					this.btnRemove.enabled = false;
-				}
+			if (this.btnRemove.enabled && this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos)) {
+				doRemoval();
 				return true;
 			}
 
@@ -263,8 +260,17 @@ public class GuiSnitchList extends GuiListExtended {
 		}
 		
 		public void actionPerformed(GuiButton button) {
+			if (!button.enabled) return;
 			switch(button.id) {
-			
+			case 10:
+				doRemoval();
+			}
+		}
+		
+		private void doRemoval() {
+			if (SV.instance.snitchList.remove(this.snitch)) {
+				this.btnRemove.displayString = "Removed!";
+				this.btnRemove.enabled = false;
 			}
 		}
 

@@ -32,10 +32,10 @@ public class GuiEditSnitches extends GuiScreen {
 	}
 
 	@Override
-	public void drawScreen(int par1, int par2, float par3) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		this.drawDefaultBackground();
-		this.guiSnitchList.drawScreen(par1, par2, par2);
-		super.drawScreen(par1, par2, par3);
+		this.guiSnitchList.drawScreen(mouseX, mouseY, partialTicks);
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
 	@Override
@@ -54,15 +54,19 @@ public class GuiEditSnitches extends GuiScreen {
 				.translateToLocal("gui.done")));
 		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height - 4 + b0, 98, 18, StatCollector
 				.translateToLocal("svoptions.resetBlockList")));
+		
+		this.guiSnitchList.registerScrollButtons(4, 5);
 	}
 
 	public void actionPerformed(GuiButton button) {
+		if (!button.enabled) return;
 		switch (button.id) {
 		case 4:
 			this.mc.displayGuiScreen((GuiScreen) null);
 			this.mc.setIngameFocus();
 			SVFileIOHandler.saveSettings();
 			SVFileIOHandler.saveList();
+			SVFileIOHandler.saveWorlds();
 			break;
 		case 5:
 			SV.instance.blockList = new ArrayList<Block>();

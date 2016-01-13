@@ -18,7 +18,7 @@ import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
  * Player Handler for Snitch Visualizer
  * 
  * @author Scuwr
- *
+ * @author ProgrammerDan
  */
 public class SVPlayerHandler {
 
@@ -30,14 +30,17 @@ public class SVPlayerHandler {
 	private static boolean playerIsInSnitchArea = false;
 	
 	private long lastExecute = 0l;
-	private static long delay = 50l;
+	private static long delay = 100l;
+	private long skips = 0l;
 
 	@SubscribeEvent
 	public void onPlayerEvent(ClientTickEvent event) {
 		if (!SV.settings.updateDetection) return;
-		if (lastExecute != 0l && ((System.currentTimeMillis() - lastExecute) < SVPlayerHandler.delay)) return; 
+		if (lastExecute != 0l && ((System.currentTimeMillis() - lastExecute) < SVPlayerHandler.delay)) {
+			skips++;
+			return;
+		}
 		try {
-			logger.info("Captured player event");
 			lastExecute = System.currentTimeMillis();
 			EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 			if (player != null) {
@@ -48,8 +51,9 @@ public class SVPlayerHandler {
 					player.prevPosY = player.posY;
 					player.prevPosZ = player.posZ;
 					onPlayerMove(player);
+					skips = 0l;
 				}
-			}
+			};
 		} catch (Exception e) {
 			logger.error("Unexpected error during client tick event handler for player movement.", e);
 		}
@@ -57,23 +61,32 @@ public class SVPlayerHandler {
 
 	public void onPlayerMove(EntityPlayerSP player) {
 		try {
-			logger.info("Current world: " + player.worldObj.getProviderName());
-			checkSnitchArea(player.worldObj.getProviderName(), (int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+			logger.info("(" + skips + " skipped events) Current world: " + player.worldObj.provider.getDimensionName() + " or "
+					+ player.worldObj.getWorldInfo().getWorldName()
+					+ player.worldObj.getWorldType().getWorldTypeName());
+			String world = player.worldObj.provider.getDimensionId() + player.worldObj.provider.getDimensionName();
+			String worldX = SV.instance.worldList.get(world);
+			if (worldX == null) {
+				worldX = world;
+				logger.info("Unable to map " + world + " to a snitch-world");
+			}
+			checkSnitchArea(worldX, (int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
 					(int) Math.floor(player.posZ), SV.instance.snitchList, false);
 		} catch (Exception e) {
 			logger.error("Unexpected error during player move handling", e);
 		}
 	}
+	public static long searchChecks = 0l;
 
 	/**
-	 * Snitch detection is now 100% accurate to my knowledge, and shows no signs
-	 * of missing snitches.
-	 * 
-	 * Editorial TODO: It's less snitches are missed, and more snitches when
-	 * overlapping are ignored. Instead of using static variables and public
-	 * parameter passing, this should return a list of snitches the player is
-	 * "intersecting". (PD 5/2015)
-	 *
+	 * Checks for a snitch. Uses three divide-and-conquer searches on world, x, z (in that order) to
+	 *    narrow search within a sorted list. This works because the sorted list is sorted using keys
+	 *    world, x, z, y in that order. First the slice holding snitches in the same world is found,
+	 *    then the slice of that holding the X of interest, then Z. Finally the results are iterated
+	 *    over to find the closest.
+	 *    
+	 * @param world
+	 *            world ID
 	 * @param x
 	 *            pos
 	 * @param y
@@ -85,16 +98,21 @@ public class SVPlayerHandler {
 	 * @param removeSnitch
 	 *            flag
 	 */
-	public static long searchChecks = 0l;
 	public static void checkSnitchArea(String world, int x, int y, int z, ArrayList<Snitch> snitchList, boolean removeSnitch) {
 		try {
 			searchChecks = 0l;
-			int min = findLowerWorldLimit(world, 0, snitchList.size() - 1, snitchList);
-			int max = findUpperWorldLimit(world, min, snitchList.size() - 1, snitchList);
-			min = findLowerXLimit(x, min, max, snitchList);
-			max = findUpperXLimit(x, min, max, snitchList);
-			min = findLowerYLimit(x, min, max, snitchList);
-			max = findUpperYLimit(x, min, max, snitchList);
+			
+			int min = 0;
+			findLowerLimit(Search.WORLD, world, 0, snitchList.size() - 1, snitchList);
+			int max = snitchList.size()-1;
+			findUpperLimit(Search.WORLD, world, min, snitchList.size() - 1, snitchList);
+			for (Search k : Search.values()) {
+				min = findLowerLimit(k, k == Search.WORLD ? world : k == Search.X ? x: z, min, max, snitchList);
+				if (max < min) return;
+				max = findUpperLimit(k, k == Search.WORLD ? world : k == Search.X ? x: z, min, max, snitchList);
+				if (max < min) return;
+				if (max - min <= 1) break;
+			}
 			
 			logger.info("Performed " + searchChecks + " checks -- final bounds: " + min + ", " + max);
 			logger.info("Total snitches: " + snitchList.size() + " -- searched " +
@@ -105,8 +123,7 @@ public class SVPlayerHandler {
 	
 			for (int i = min; i <= max; i++) {
 				Snitch n = snitchList.get(i);
-				if (x >= n.getFieldMinX() && x <= n.getFieldMaxX() && z >= n.getFieldMinZ() && z <= n.getFieldMaxZ() && 
-						y >= n.getFieldMinY() && y <= n.getFieldMaxY()) {
+				if (n.contains(world, x, y, z)) {
 					// Get closest snitch
 					double temp = Minecraft.getMinecraft().thePlayer.getDistanceSq(n.getX(), n.getY(), n.getZ());
 					if (temp < sqDistance) {
@@ -149,75 +166,38 @@ public class SVPlayerHandler {
 	 * maybe use a map?
 	 */
 
-	private static int findUpperYLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
+	private enum Search {
+		X,
+		Z,
+		WORLD;
+	}
+	
+	private static int findUpperLimit(Search s, Object obj, int min, int max, ArrayList<Snitch> snitchList) {
 		if (max - min <= 1) {
 			return max;
 		}
+
+		int mid = (min + max) /2;
 		Snitch n = snitchList.get(mid);
 
 		searchChecks++;
-		if (i > n.getFieldMinY()) {
-			return findUpperYLimit(i, mid, max, snitchList);
+		if (	(s.equals(Search.X) && (Integer) obj > n.getFieldMinX()) ||
+				(s.equals(Search.Z) && (Integer) obj > n.getFieldMinZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(n.getWorld()) > 0)) {
+			return findUpperLimit(s, obj, mid + 1, max, snitchList);
 		}
 		searchChecks++;
-		if (i < n.getFieldMinY()) {
-			return findUpperYLimit(i, min, mid, snitchList);
-		}
-		int nmid = mid ++;
-		while (i == snitchList.get(nmid).getFieldMinY()) {
-			searchChecks++;
-			nmid ++;
-		}
-		searchChecks++;
-		mid = nmid --;
-
-		return mid;
-	}
-
-	private static int findLowerYLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) {
-			return min;
-		}
-		Snitch n = snitchList.get(mid);
-
-		searchChecks++;
-		if (i > n.getFieldMaxY()) {
-			return findLowerYLimit(i, mid, max, snitchList);
-		}
-		searchChecks++;
-		if (i < n.getFieldMaxY()) {
-			return findLowerYLimit(i, min, mid, snitchList);
-		}
-		int nmid = mid --;
-		while (i == snitchList.get(nmid).getFieldMaxY()) {
-			searchChecks++;
-			nmid --;
-		}
-		searchChecks++;
-		mid = nmid ++;
-		return mid;
-	}
-
-	private static int findUpperXLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) {
-			return max;
-		}
-		Snitch n = snitchList.get(mid);
-
-		searchChecks++;
-		if (i > n.getFieldMinX()) {
-			return findUpperXLimit(i, mid, max, snitchList);
+		if (	(s.equals(Search.X) && (Integer) obj < n.getFieldMinX()) ||
+				(s.equals(Search.Z) && (Integer) obj < n.getFieldMinZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(n.getWorld()) < 0)) {
+			return findUpperLimit(s, obj, min, mid - 1, snitchList);
 		}
 		
-		searchChecks++;
-		if (i < n.getFieldMinX()) {
-			return findUpperXLimit(i, min, mid, snitchList);
-		}
 		int nmid = mid ++;
-		while (i == snitchList.get(nmid).getFieldMinX()) {
+		while (	nmid <= max &&
+				(s.equals(Search.X) && (Integer) obj == snitchList.get(nmid).getFieldMinX()) ||
+				(s.equals(Search.Z) && (Integer) obj == snitchList.get(nmid).getFieldMinZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(snitchList.get(nmid).getWorld()) == 0)) {
 			searchChecks++;
 			nmid ++;
 		}
@@ -227,75 +207,32 @@ public class SVPlayerHandler {
 		return mid;
 	}
 
-	private static int findLowerXLimit(int i, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
+	private static int findLowerLimit(Search s, Object obj, int min, int max, ArrayList<Snitch> snitchList) {
 		if (max - min <= 1) {
 			return min;
 		}
+
+		int mid = (min + max) /2;
 		Snitch n = snitchList.get(mid);
 
 		searchChecks++;
-		if (i > n.getFieldMaxX()) {
-			return findLowerXLimit(i, mid, max, snitchList);
+		if (	(s.equals(Search.X) && (Integer) obj > n.getFieldMaxX()) ||
+				(s.equals(Search.Z) && (Integer) obj > n.getFieldMaxZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(n.getWorld()) > 0)) {
+			return findLowerLimit(s, obj, mid + 1, max, snitchList);
 		}
 		searchChecks++;
-		if (i < n.getFieldMaxX()) {
-			return findLowerXLimit(i, min, mid, snitchList);
+		if (	(s.equals(Search.X) && (Integer) obj < n.getFieldMaxX()) ||
+				(s.equals(Search.Z) && (Integer) obj < n.getFieldMaxZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(n.getWorld()) < 0)) {
+			return findLowerLimit(s, obj, min, mid - 1, snitchList);
 		}
-		int nmid = mid --;
-		while (i == snitchList.get(nmid).getFieldMaxX()) {
-			searchChecks++;
-			nmid --;
-		}
-		searchChecks++;
-		mid = nmid ++;
-		return mid;
-	}
-
-	
-	private static int findUpperWorldLimit(String world, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) {
-			return max;
-		}
-		Snitch n = snitchList.get(mid);
 		
-		searchChecks++;
-		if (world.compareTo(n.getWorld()) > 0) {
-			return findUpperWorldLimit(world, mid, max, snitchList);
-		}
-		searchChecks++;
-		if (world.compareTo(n.getWorld()) < 0) {
-			return findUpperWorldLimit(world, min, mid, snitchList);
-		}
-		int nmid = mid ++;
-		while (world.compareTo(snitchList.get(nmid).getWorld()) == 0) {
-			searchChecks++;
-			nmid ++;
-		}
-		searchChecks++;
-		mid = nmid --;
-
-		return mid;
-	}
-
-	private static int findLowerWorldLimit(String world, int min, int max, ArrayList<Snitch> snitchList) {
-		int mid = min + ((max - min) / 2);
-		if (max - min <= 1) {
-			return min;
-		}
-		Snitch n = snitchList.get(mid);
-
-		searchChecks++;
-		if (world.compareTo(n.getWorld()) > 0) {
-			return findLowerWorldLimit(world, mid, max, snitchList);
-		}
-		searchChecks++;
-		if (world.compareTo(n.getWorld()) < 0) {
-			return findLowerWorldLimit(world, min, mid, snitchList);
-		}
 		int nmid = mid --;
-		while (world.compareTo(snitchList.get(nmid).getWorld()) == 0) {
+		while (	nmid >= min &&
+				(s.equals(Search.X) && (Integer) obj == snitchList.get(nmid).getFieldMaxX()) ||
+				(s.equals(Search.Z) && (Integer) obj == snitchList.get(nmid).getFieldMaxZ()) ||
+				(s.equals(Search.WORLD) && ((String) obj).compareTo(snitchList.get(nmid).getWorld()) == 0)) {
 			searchChecks++;
 			nmid --;
 		}
@@ -304,6 +241,4 @@ public class SVPlayerHandler {
 
 		return mid;
 	}
-
-	
 }
