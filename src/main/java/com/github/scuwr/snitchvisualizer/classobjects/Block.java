@@ -10,12 +10,12 @@ import net.minecraft.client.entity.EntityPlayerSP;
  *
  */
 public class Block {
-	public int x;
-	public int y;
-	public int z;
-	public Action type;
-	public String playerName;
-	public String details;
+	private int x;
+	private int y;
+	private int z;
+	private Action type;
+	private String playerName;
+	private String details;
 
 	public enum Action {
 		NOP, USED, REMOVED, PLACED, ENTRY, EMPTY, LOGIN, LOGOUT, EXCHANGE, DESTROYED;
@@ -57,5 +57,53 @@ public class Block {
 		EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 		return Math.sqrt(Math.pow((thePlayer.posX - this.x), 2)
 				+ Math.pow((thePlayer.posZ - this.z), 2));
+	}
+
+	public final int getX() {
+		return x;
+	}
+
+	public final void setX(int x) {
+		this.x = x;
+	}
+
+	public final int getY() {
+		return y;
+	}
+
+	public final void setY(int y) {
+		this.y = y;
+	}
+
+	public final int getZ() {
+		return z;
+	}
+
+	public final void setZ(int z) {
+		this.z = z;
+	}
+
+	public final Action getType() {
+		return type;
+	}
+
+	public final void setType(Action type) {
+		this.type = type;
+	}
+
+	public final String getPlayerName() {
+		return playerName;
+	}
+
+	public final void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+
+	public final String getDetails() {
+		return details;
+	}
+
+	public final void setDetails(String details) {
+		this.details = details;
 	}
 }

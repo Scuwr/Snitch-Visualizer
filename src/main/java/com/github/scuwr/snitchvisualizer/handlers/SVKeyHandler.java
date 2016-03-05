@@ -40,16 +40,19 @@ public class SVKeyHandler {
 			} catch (Exception e) {
 				logger.error("Unexpected error displaying SV gui", e);
 			}
+			return;
 		}
-		if (keyRemoveSnitch.isPressed() && SV.settings.renderEnabled) {
+		if (SV.settings.renderEnabled && keyRemoveSnitch.isPressed()) {
 			try {
 				logger.info("Delete Snitch Key Pressed!");
 				EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-				SVPlayerHandler.checkSnitchArea((int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
+				logger.info("Current world: " + player.worldObj.getProviderName());
+				SVPlayerHandler.checkSnitchArea(player.worldObj.getProviderName(), (int) Math.floor(player.posX), (int) Math.floor(player.posY) - 1,
 						(int) Math.floor(player.posZ), SV.instance.snitchList, true);
 			} catch (Exception e) {
 				logger.error("Unexpected error while deleting a snitch", e);
 			}
+			return;
 		}
 	}
 

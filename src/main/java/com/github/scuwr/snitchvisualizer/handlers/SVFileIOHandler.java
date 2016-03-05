@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,8 @@ public class SVFileIOHandler {
 	public static File oldSnitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + "/SnitchList.txt");
 	public static File snitchList = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir
 			+ "/SnitchList.csv");
+	public static File worldList = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir
+			+ "/WorldList.csv");
 	public static File svSettings = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir
 			+ "/SVSettings.txt");
 	public static File reportDir = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport);
@@ -41,25 +45,52 @@ public class SVFileIOHandler {
 
 	private static Logger logger = LogManager.getLogger("SnitchVisualizer");
 
+	private static boolean prepareFile(File basedir, File savefile) throws IOException {
+		if (!basedir.exists()) {
+			logger.info("Creating Snitch Visualizer Directory");
+			if (!basedir.mkdirs()) {
+				logger.error("Failed to create Snitch Visualizer Directory!");
+				return false;
+			}
+		}
+		if (!savefile.exists()) {
+			logger.info("Creating new file: " + savefile.getName());
+			savefile.createNewFile();
+		}
+		return true;
+	}
+	
+	public static void saveWorlds() {
+		isDone = false;
+		try{
+			prepareFile(svDir, worldList);
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter(worldList));
+			
+			for (Map.Entry<String,String> entry : SV.instance.worldList.entrySet()) {
+				bw.write(entry.getKey() + "," + entry.getValue() + ",\r\n");
+			}
+			
+			bw.close();
+		} catch (IOException e) {
+			logger.error("Failed to write to WorldList.csv!", e);
+		} catch (Exception f) {
+			logger.error("General failure while writing WorldList.csv", f);
+		}
+		isDone = true;
+	}
+	
 	public static void saveList() {
 		isDone = false;
 		try {
-			if (!svDir.exists()) {
-				logger.info("Creating Snitch Visualizer Directory");
-				if (!svDir.mkdirs()) {
-					logger.error("Failed to create Snitch Visualizer Directory!");
-				}
-			}
-			if (!snitchList.exists()) {
-				logger.info("Creating new file: SnitchList.csv");
-				snitchList.createNewFile();
-			}
+			prepareFile(svDir, snitchList);
 
 			BufferedWriter bw = new BufferedWriter(new FileWriter(snitchList));
 			logger.info("Saving Snitch list.. " + SV.instance.snitchList.size() + " snitches to save.");
 			for (Snitch n : SV.instance.snitchList) {
-				bw.write(n.x + "," + n.y + "," + n.z + "," + n.cullTime.getTime() + "," + n.ctGroup + "," + n.name
-						+ "," + "\r\n");
+				bw.write(n.getWorld() + "," + n.getX() + "," + n.getY() + "," + n.getZ() + "," + 
+							((n.getRawCullTime() != null) ? n.getRawCullTime().getTime() : " ") + "," +
+							n.getCtGroup() + "," + n.getName() + ",\r\n");
 			}
 			bw.close();
 		} catch (IOException e) {
@@ -73,16 +104,7 @@ public class SVFileIOHandler {
 	public static void saveSettings() {
 		isDone = false;
 		try {
-			if (!svDir.exists()) {
-				logger.info("Creating Snitch Visualizer Directory");
-				if (!svDir.mkdirs()) {
-					logger.error("Failed to create Snitch Visualizer Directory!");
-				}
-			}
-			if (!svSettings.exists()) {
-				logger.info("Creating new file: SVSettings.txt");
-				svSettings.createNewFile();
-			}
+			prepareFile(svDir, svSettings);
 
 			BufferedWriter bw = new BufferedWriter(new FileWriter(svSettings));
 			bw.write(SV.settings.getKeyBinding(SVSettings.Options.UPDATE_DETECTION) + ";\r\n");
@@ -98,6 +120,40 @@ public class SVFileIOHandler {
 		isDone = true;
 	}
 
+	public static void loadWorlds() {
+		isDone = false;
+		try{
+			if (!worldList.exists()) {
+				saveWorlds();
+			}
+			
+			BufferedReader br = new BufferedReader(new FileReader(worldList));
+			
+			String line = br.readLine();
+			while (line != null) {
+				String tokens[] = line.split(",");
+				if (tokens.length > 2) {
+					SV.instance.worldList.put(tokens[0], tokens[1]);
+					ArrayList<String> worldsIds = SV.instance.inverseWorldList.get(tokens[1]);
+					if (worldsIds == null) {
+						worldsIds = new ArrayList<String>();
+						SV.instance.inverseWorldList.put(tokens[1], worldsIds);
+					}
+					worldsIds.add(tokens[0]);
+				} else {
+					logger.info("Unknown world mapping: " + line);
+				}
+			}
+			
+			br.close();
+		} catch (IOException e) {
+			logger.error("Failed to write to WorldList.csv!", e);
+		} catch (Exception f) {
+			logger.error("General failure while writing WorldList.csv", f);
+		}
+		isDone = true;
+	}
+	
 	public static void loadList() {
 		isDone = false;
 		try {
@@ -115,9 +171,16 @@ public class SVFileIOHandler {
 			String line = br.readLine();
 			while (line != null) {
 				String tokens[] = line.split(",|;");
-				if (tokens.length > 5) {
+				if (tokens.length > 6) { // new
+					double cullTime = (!tokens[4].trim().equals("")) ? hoursToDate(Long.parseLong(tokens[4])) : -1;
+					SV.instance.snitchList.add(new Snitch(tokens[0], Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]),
+							Integer.parseInt(tokens[3]), cullTime, tokens[5], tokens[6]));
+				} else if (tokens.length > 5) { //old
+					double cullTime = (!tokens[3].trim().equals("")) ? hoursToDate(Long.parseLong(tokens[3])) : -1;
 					SV.instance.snitchList.add(new Snitch(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]),
-							Integer.parseInt(tokens[2]), hoursToDate(Long.parseLong(tokens[3])), tokens[4], tokens[5]));
+							Integer.parseInt(tokens[2]), cullTime, tokens[4], tokens[5]));
+				} else {
+					logger.info("Snitch line failed to import: " + line);
 				}
 				line = br.readLine();
 			}
@@ -203,16 +266,7 @@ public class SVFileIOHandler {
 		try {
 			if (!snitchName.equals("")) {
 				try {
-					if (!svDir.exists()) {
-						logger.info("Creating Snitch Visualizer Directory");
-						if (!svDir.mkdirs()) {
-							logger.error("Failed to create Snitch Visualizer Directory!");
-						}
-					}
-					if (!reportDir.exists()) {
-						logger.info("Creating Snitch Report Directory");
-						reportDir.createNewFile();
-					}
+					prepareFile(svDir, reportDir);
 					File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport
 							+ "/" + snitchName + ".csv");
 					snitchReport.createNewFile();
@@ -221,7 +275,7 @@ public class SVFileIOHandler {
 					logger.info("Saving Snitch list.. " + SVChatHandler.tempList.size() + " snitches to save.");
 					for (Block b : SVChatHandler.tempList) {
 						String type = "";
-						switch (b.type) {
+						switch (b.getType()) {
 						case USED:
 							type = "Used";
 							break;
@@ -245,7 +299,7 @@ public class SVFileIOHandler {
 						default:
 							break;
 						}
-						bw.write(b.playerName + "," + type + "," + b.details + "," + b.x + "," + b.y + "," + b.z + ","
+						bw.write(b.getPlayerName() + "," + type + "," + b.getDetails() + "," + b.getX() + "," + b.getY() + "," + b.getZ() + ","
 								+ "\r\n");
 					}
 					bw.close();

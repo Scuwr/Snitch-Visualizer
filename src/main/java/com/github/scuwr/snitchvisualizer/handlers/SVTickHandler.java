@@ -37,10 +37,8 @@ public class SVTickHandler {
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
 		try {
-			//TODO double check, seems a memory leak here but might have been intentional,
-			// if so rip it out and redesign as it was horrible.
-			if (SV.instance.playerHandler != null)
-				SV.instance.playerHandler.onPlayerEvent(event);
+			/*if (SV.instance.playerHandler != null)
+				SV.instance.playerHandler.onPlayerEvent(event);*/
 			
 			if (((new Date()).getTime() - (waitTime * 1000)) > start.getTime()) {
 				if (SVChatHandler.updateSnitchList) {

@@ -1,6 +1,8 @@
 package com.github.scuwr.snitchvisualizer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -33,7 +35,7 @@ public class SV {
 
 	public static final String MODID = "scuwrsnitchvisualizer";
 	public static final String MODNAME = "Snitch Visualizer";
-	public static final String MODVERSION = "1.1.4";
+	public static final String MODVERSION = "1.1.6";
 
 	@Instance("SV")
 	public static SV instance;
@@ -43,6 +45,8 @@ public class SV {
 	 */
 	public ArrayList<Snitch> snitchList;
 	public ArrayList<Block> blockList;
+	public Map<String, String> worldList; 
+	public Map<String, ArrayList<String>> inverseWorldList;
 	public static SVSettings settings;
 	public static Logger logger = LogManager.getLogger("SnitchVisualizer");
 	public SVPlayerHandler playerHandler;
@@ -53,9 +57,12 @@ public class SV {
 		instance = this;
 		this.snitchList = new ArrayList<Snitch>();
 		this.blockList = new ArrayList<Block>();
+		this.worldList = new HashMap<String,String>();
+		this.inverseWorldList = new HashMap<String,ArrayList<String>>();
 		SV.settings = new SVSettings(this);
 		SVFileIOHandler.loadSettings();
 		SVFileIOHandler.loadList();
+		SVFileIOHandler.loadWorlds();
 
 		if (!(this.snitchList instanceof ArrayList)) {
 			logger.info("Snitch List failed to instantiate!");
@@ -69,7 +76,7 @@ public class SV {
 		MinecraftForge.EVENT_BUS.register(new SVRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SVChatHandler());
 		playerHandler = new SVPlayerHandler();
-		MinecraftForge.EVENT_BUS.register(playerHandler);
+		FMLCommonHandler.instance().bus().register(playerHandler);
 		FMLCommonHandler.instance().bus().register(new SVTickHandler());
 	}
 
