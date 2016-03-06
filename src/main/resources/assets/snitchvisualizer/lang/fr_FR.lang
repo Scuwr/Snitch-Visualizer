@@ -1,8 +1,9 @@
 svoptions.listUpdate=Mise À Jour Snitchlist
-svoptions.updateDetection=Mise À Jour Auto
+svoptions.updateDetection=Détection Automatique
 svoptions.renderDistance=Rendu Distance
 svoptions.renderEnabled=Rendu
-svoptions.keyBinding=SV Réglages Des Raccourcis Clavier
+svoptions.keyBinding=SV Paramètres du Clavier
 svoptions.editList=Modifier Liste
 svoptions.snitchReport=Générer Rapport Snitch
-svoptions.resetBlockList=Réinitialiser Liste Blocage
+svoptions.snitchReportCancel=Annuler Rapport Snitch
+svoptions.resetSnitchList=Réinitialiser Snitchlist

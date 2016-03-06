@@ -266,7 +266,7 @@ public class SVFileIOHandler {
 		try {
 			if (!snitchName.equals("")) {
 				try {
-					prepareFile(svDir, reportDir);
+					if(!reportDir.exists()) reportDir.mkdirs();
 					File snitchReport = new File(Minecraft.getMinecraft().mcDataDir.toString() + folderDir + folderReport
 							+ "/" + snitchName + ".csv");
 					snitchReport.createNewFile();

@@ -52,8 +52,14 @@ public class SVGui extends GuiScreen {
 		this.buttonList.clear();
 		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 24 + b0, StatCollector
 				.translateToLocal("svoptions.listUpdate")));
+		if(SVChatHandler.snitchReport){
+			this.buttonList.add(new GuiButton(6, this.width / 2 - 100, this.height / 4 + 48 + b0, StatCollector
+					.translateToLocal("svoptions.snitchReportCancel")));
+		}
+		else{
 		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + b0, StatCollector
 				.translateToLocal("svoptions.snitchReport")));
+		}
 		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 72 + b0, 98, 18, SV.settings
 				.getKeyBinding(SVSettings.Options.UPDATE_DETECTION)));
 		this.buttonList.add(new GuiButton(2, this.width / 2 + 2, this.height / 4 + 72 + b0, 98, 18, SV.settings
@@ -95,6 +101,13 @@ public class SVGui extends GuiScreen {
 		case 5:
 			SVChatHandler.tempList = new ArrayList<Block>();
 			SVChatHandler.snitchReport = true;
+			this.mc.displayGuiScreen((GuiScreen) null);
+			this.mc.setIngameFocus();
+			break;
+		case 6:
+			SVChatHandler.snitchReport = false;
+			SVChatHandler.jalistIndex = 1;
+			SVChatHandler.jainfoIndex = 1;
 			this.mc.displayGuiScreen((GuiScreen) null);
 			this.mc.setIngameFocus();
 			break;

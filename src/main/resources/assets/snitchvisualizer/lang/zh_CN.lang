@@ -1,0 +1,9 @@
+svoptions.listUpdate=更新摄像机列表
+svoptions.updateDetection=自动更新
+svoptions.renderDistance=呈现的距离
+svoptions.renderEnabled=呈现
+svoptions.keyBinding=SV 键盘设置
+svoptions.editList=编辑列表
+svoptions.snitchReport=生成的照相机报告
+svoptions.snitchReportCancel=取消摄像机报告
+svoptions.resetSnitchList=重置相机列表

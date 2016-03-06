@@ -43,11 +43,10 @@ public class SVChatHandler {
 			if (msg == null) {
 				return;
 			}
-			if (!msg.contains("*")) {
-				Matcher isSM = SVChatHandler.snitchMessage.matcher(msg);
-				if (isSM.matches()) {
-					parseSnitch(msg, isSM);
-				}
+			
+			Matcher isSM = SVChatHandler.snitchMessage.matcher(msg);
+			if (isSM.matches()) {
+				parseSnitch(msg, isSM);
 			} else if (msg.contains("*") && msg.contains("snitch at")) {
 				// parseSnitch(msg)
 			} else if (msg.contains("Used") || msg.contains("Block Break") || msg.contains("Block Place")) {
@@ -59,10 +58,10 @@ public class SVChatHandler {
 			} else if (msg.contains("Snitch Log for") || msg.contains("Page 1 is empty for snitch")) {
 				// export jainfo to csv
 				try {
-					if (SVPlayerHandler.snitchIndex > -1) { // fix issue
-						Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
+					if (true){//SVPlayerHandler.snitchIndex > -1) { // fix issue
+						//Snitch n = SV.instance.snitchList.get(SVPlayerHandler.snitchIndex);
 						String name = parseSnitchName(msg);
-						n.setName(name);
+						//n.setName(name);
 						if (SVPlayerHandler.updateSnitchName) {
 							SVPlayerHandler.updateSnitchName = false; // done!
 						}
@@ -89,7 +88,7 @@ public class SVChatHandler {
 						logger.error("Couldn't notify player of error", f);
 					}
 				}
-			} else if (msg.contains("Unknown command") || msg.contains(" is empty")) {
+			} else if (msg.contains("Unknown command") || msg.contains(" is empty") || msg.contains("You do not own any snitches nearby!")) {
 				jalistIndex = 1;
 				jainfoIndex = 1;
 				updateSnitchList = false;
@@ -262,9 +261,9 @@ public class SVChatHandler {
 	}
 
 	public void parseEntry(String msg) {
-		if (msg != null && msg.contains(">")) {
+		if (msg != null) {
 			try {
-				msg = msg.substring(msg.indexOf(">") + 1);
+				//msg = msg.substring(msg.indexOf(">") + 1);
 				logger.info("Parsing string " + msg);
 				String[] tokens = msg.split(" +");
 				if (tokens[2].equals("Entry")) {

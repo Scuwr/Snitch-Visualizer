@@ -9,6 +9,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.apache.logging.log4j.LogManager;
+
 import com.github.scuwr.snitchvisualizer.SV;
 import com.github.scuwr.snitchvisualizer.classobjects.Snitch;
 
@@ -34,7 +36,7 @@ public class GuiSnitchList extends GuiListExtended {
 	
 	public GuiSnitchList(GuiEditSnitches guiSnitches, Minecraft mc) {
 		super(mc, 
-				guiSnitches.width - 32,		// width
+				guiSnitches.width,		// width
 				guiSnitches.height, 		// height
 				32, 						// top
 				guiSnitches.height - 32, 	// bottom
@@ -96,7 +98,7 @@ public class GuiSnitchList extends GuiListExtended {
         String root = EnumChatFormatting.UNDERLINE + "" + EnumChatFormatting.BOLD;
         
 		int xPosition = p_148129_1_;
-		int yFinal = p_148129_2_ - GuiSnitchList.this.mc.fontRendererObj.FONT_HEIGHT - 1;
+		int yFinal = p_148129_2_ + GuiSnitchList.this.mc.fontRendererObj.FONT_HEIGHT - 1;
 
 		int sum = 0; 
 		
@@ -196,8 +198,8 @@ public class GuiSnitchList extends GuiListExtended {
 
 		public void drawEntry(int p_148279_1_, int xPosition, int yPosition, int p_148279_4_, int p_148279_5_,
 				int p_148279_7_, int p_148279_8_, boolean p_148279_9_) {
-			xPosition = xPosition - 16;
-			int yFinal = yPosition + (p_148279_5_ - GuiSnitchList.this.mc.fontRendererObj.FONT_HEIGHT) / 2;
+			//xPosition = xPosition - 1;
+			int yFinal = yPosition + (p_148279_5_ + GuiSnitchList.this.mc.fontRendererObj.FONT_HEIGHT) / 2;
 
 			int sum = 0; 
 			
@@ -228,7 +230,7 @@ public class GuiSnitchList extends GuiListExtended {
 			}
 
 			this.btnRemove.xPosition = xPosition + GuiSnitchList.this.width - btnRemove.width - 16;
-			this.btnRemove.yPosition = yPosition;
+			this.btnRemove.yPosition = yPosition + this.btnRemove.height / 4;
 			this.btnRemove.drawButton(GuiSnitchList.this.mc, p_148279_7_, p_148279_8_);
 		}
 
@@ -236,6 +238,9 @@ public class GuiSnitchList extends GuiListExtended {
 		 * Returns true if the mouse has been pressed on this control.
 		 */
 		public boolean mousePressed(int index, int xPos, int yPos, int mouseEvent, int relX, int relY) {
+			
+			//LogManager.getLogger("SnitchVisualizer").info("MousePress on SnitchListItem Detected!");
+			
 			if (this.btnRemove.enabled && this.btnRemove.mousePressed(GuiSnitchList.this.mc, xPos, yPos)) {
 				doRemoval();
 				return true;
@@ -244,16 +249,8 @@ public class GuiSnitchList extends GuiListExtended {
 			return false;
 		}
 		
-		/*public void actionPerformed(GuiButton button) {
-			if (!button.enabled) return;
-			switch(button.id) {
-			case 10:
-				doRemoval();
-			}
-		}*/
-		
 		private void doRemoval() {
-			if (SV.instance.snitchList.remove(this.snitch)) {
+			if (guiSnitches.removeSnitches.add(this.snitch)) {
 				this.btnRemove.displayString = "Removed!";
 				this.btnRemove.enabled = false;
 			}
@@ -263,6 +260,7 @@ public class GuiSnitchList extends GuiListExtended {
 		 * Fired when the mouse button is released. Arguments: index, x, y,
 		 * mouseEvent, relativeX, relativeY
 		 */
+		
 		public void mouseReleased(int index, int xPos, int yPos, int mouseEvent, int relX, int relY) {
 			this.btnRemove.mouseReleased(xPos, yPos);
 		}
