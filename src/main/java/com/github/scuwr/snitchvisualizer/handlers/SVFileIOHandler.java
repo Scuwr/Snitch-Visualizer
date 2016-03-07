@@ -132,7 +132,7 @@ public class SVFileIOHandler {
 			String line = br.readLine();
 			while (line != null) {
 				String tokens[] = line.split(",");
-				if (tokens.length > 2) {
+				if (tokens.length > 1) {
 					SV.instance.worldList.put(tokens[0], tokens[1]);
 					ArrayList<String> worldsIds = SV.instance.inverseWorldList.get(tokens[1]);
 					if (worldsIds == null) {
