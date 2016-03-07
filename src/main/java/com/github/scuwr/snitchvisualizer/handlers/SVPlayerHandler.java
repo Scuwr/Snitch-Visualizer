@@ -136,7 +136,12 @@ public class SVPlayerHandler {
 			if (index != -1) {
 				snitchIndex = index;
 				Snitch n = SV.instance.snitchList.get(index);
-				n.setRawCullTime(Snitch.changeToDate(672.0));
+
+				//Only refresh the cull time if cull time is turned on
+				//(Having a null raw cull time means its turned off)
+				if(n.getRawCullTime() != null)
+					n.setRawCullTime(Snitch.changeToDate(672.0));
+
 				playerIsInSnitchArea = true;
 				updateSnitchName = false;
 				if (removeSnitch) {
